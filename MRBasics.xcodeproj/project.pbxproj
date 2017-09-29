@@ -16,7 +16,7 @@
 		754E1E0F1F7DEA7300265633 /* MRBasicsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 754E1E0E1F7DEA7300265633 /* MRBasicsUITests.swift */; };
 		754E1E1E1F7DEB2A00265633 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 754E1E1D1F7DEB2A00265633 /* OpenGLES.framework */; };
 		754E1E201F7DEB3400265633 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 754E1E1F1F7DEB3400265633 /* GLKit.framework */; };
-		754E1E221F7DF18900265633 /* GLESBasic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 754E1E211F7DF18900265633 /* GLESBasic.swift */; };
+		754E1E221F7DF18900265633 /* GLKExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 754E1E211F7DF18900265633 /* GLKExtension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,7 +52,7 @@
 		754E1E101F7DEA7300265633 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		754E1E1D1F7DEB2A00265633 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		754E1E1F1F7DEB3400265633 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
-		754E1E211F7DF18900265633 /* GLESBasic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GLESBasic.swift; sourceTree = "<group>"; };
+		754E1E211F7DF18900265633 /* GLKExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GLKExtension.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +82,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7509AEFB1F7E067000F7A910 /* Shader */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Shader;
+			sourceTree = "<group>";
+		};
 		754E1DE21F7DEA7200265633 = {
 			isa = PBXGroup;
 			children = (
@@ -106,9 +113,10 @@
 		754E1DED1F7DEA7200265633 /* MRBasics */ = {
 			isa = PBXGroup;
 			children = (
+				7509AEFB1F7E067000F7A910 /* Shader */,
 				754E1DEE1F7DEA7200265633 /* AppDelegate.swift */,
 				754E1DF01F7DEA7200265633 /* ViewController.swift */,
-				754E1E211F7DF18900265633 /* GLESBasic.swift */,
+				754E1E211F7DF18900265633 /* GLKExtension.swift */,
 				754E1DF21F7DEA7200265633 /* Main.storyboard */,
 				754E1DF51F7DEA7200265633 /* Assets.xcassets */,
 				754E1DF71F7DEA7200265633 /* LaunchScreen.storyboard */,
@@ -278,7 +286,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				754E1E221F7DF18900265633 /* GLESBasic.swift in Sources */,
+				754E1E221F7DF18900265633 /* GLKExtension.swift in Sources */,
 				754E1DF11F7DEA7200265633 /* ViewController.swift in Sources */,
 				754E1DEF1F7DEA7200265633 /* AppDelegate.swift in Sources */,
 			);
