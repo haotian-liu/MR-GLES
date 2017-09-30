@@ -19,7 +19,10 @@ class ViewController: GLKViewController {
         GLKVector3(-0.5,  0.5, 0.0)
     ]
 
-    var vertexBufferId = GLuint()
+    let vertIndex : [GLuint] = [ 0, 1, 2, 0, 2, 3 ]
+
+    var VAO = GLuint()
+    var VBO = Array<GLuint>(repeating: GLuint(), count: 3)
     var baseEffect = GLKBaseEffect()
     var shader : BaseEffect!
 
@@ -36,16 +39,13 @@ class ViewController: GLKViewController {
     override func glkView(_ view: GLKView, drawIn rect: CGRect) {
         baseEffect.prepareToDraw()
 
-        glClearColor(1.0, 0.0, 0.0, 1.0);
+        glClearColor(1.0, 1.0, 1.0, 1.0);
         glClear(GLenum(GL_COLOR_BUFFER_BIT))
 
         shader.prepareToDraw()
 
-        glBindBuffer(GLenum(GL_ARRAY_BUFFER), vertexBufferId)
-        let locVertPos = GLuint(glGetAttribLocation(shader.ProgramId(), "vertPos"))
-        glEnableVertexAttribArray(locVertPos)
-        glVertexAttribPointer(locVertPos, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<GLKVector3>.size), nil)
-        glDrawArrays(GLenum(GL_TRIANGLE_FAN), 0, GLsizei(vertices.count))
+        glBindVertexArray(VAO)
+        glDrawElements(GLenum(GL_TRIANGLES), GLsizei(vertIndex.count), GLenum(GL_UNSIGNED_INT), nil)
     }
 }
 
@@ -61,9 +61,21 @@ extension ViewController {
     }
 
     func setupBuffer() {
-        glGenBuffers(1, &vertexBufferId)
-        glBindBuffer(GLenum(GL_ARRAY_BUFFER), vertexBufferId)
+        glGenVertexArrays(1, &VAO)
+        glBindVertexArray(VAO)
+
+        glGenBuffers(3, &VBO[0])
+
+        glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), VBO[0])
+        glBufferData(GLenum(GL_ELEMENT_ARRAY_BUFFER), vertIndex.count * MemoryLayout<GLuint>.size, vertIndex, GLenum(GL_STATIC_DRAW))
+
+        glBindBuffer(GLenum(GL_ARRAY_BUFFER), VBO[1])
         glBufferData(GLenum(GL_ARRAY_BUFFER), vertices.count * MemoryLayout<GLKVector3>.size, vertices, GLenum(GL_STATIC_DRAW))
+        let locVertPos = GLuint(glGetAttribLocation(shader.ProgramId(), "vertPos"))
+        glEnableVertexAttribArray(locVertPos)
+        glVertexAttribPointer(locVertPos, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<GLKVector3>.size), nil)
+
+        glBindVertexArray(0)
     }
 }
 
