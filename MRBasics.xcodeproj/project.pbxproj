@@ -8,9 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		7519C3F51F7F3ADB003EE503 /* MyGLBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7519C3F41F7F3ADB003EE503 /* MyGLBase.swift */; };
-		7519C3F71F7F3E74003EE503 /* base.vs in Resources */ = {isa = PBXBuildFile; fileRef = 7519C3F61F7F3E74003EE503 /* base.vs */; };
-		7519C3F91F7F3E7E003EE503 /* base.fs in Resources */ = {isa = PBXBuildFile; fileRef = 7519C3F81F7F3E7E003EE503 /* base.fs */; };
-		7519C3FB1F7F442B003EE503 /* Shader in Resources */ = {isa = PBXBuildFile; fileRef = 7519C3FA1F7F442B003EE503 /* Shader */; };
+		751DD6261F7F96190005D864 /* ObjLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 751DD6251F7F96190005D864 /* ObjLoader.swift */; };
 		754E1DEF1F7DEA7200265633 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 754E1DEE1F7DEA7200265633 /* AppDelegate.swift */; };
 		754E1DF11F7DEA7200265633 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 754E1DF01F7DEA7200265633 /* ViewController.swift */; };
 		754E1DF41F7DEA7200265633 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 754E1DF21F7DEA7200265633 /* Main.storyboard */; };
@@ -21,6 +19,7 @@
 		754E1E1E1F7DEB2A00265633 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 754E1E1D1F7DEB2A00265633 /* OpenGLES.framework */; };
 		754E1E201F7DEB3400265633 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 754E1E1F1F7DEB3400265633 /* GLKit.framework */; };
 		754E1E221F7DF18900265633 /* GLKExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 754E1E211F7DF18900265633 /* GLKExtension.swift */; };
+		75B84B891F7F95850080207C /* Shader in Resources */ = {isa = PBXBuildFile; fileRef = 75B84B881F7F95840080207C /* Shader */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,9 +41,7 @@
 
 /* Begin PBXFileReference section */
 		7519C3F41F7F3ADB003EE503 /* MyGLBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyGLBase.swift; sourceTree = "<group>"; };
-		7519C3F61F7F3E74003EE503 /* base.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = base.vs; sourceTree = "<group>"; };
-		7519C3F81F7F3E7E003EE503 /* base.fs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = base.fs; sourceTree = "<group>"; };
-		7519C3FA1F7F442B003EE503 /* Shader */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Shader; path = MRBasics/Shader; sourceTree = "<group>"; };
+		751DD6251F7F96190005D864 /* ObjLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjLoader.swift; sourceTree = "<group>"; };
 		754E1DEB1F7DEA7200265633 /* MRBasics.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MRBasics.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		754E1DEE1F7DEA7200265633 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		754E1DF01F7DEA7200265633 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -61,6 +58,7 @@
 		754E1E1D1F7DEB2A00265633 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		754E1E1F1F7DEB3400265633 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 		754E1E211F7DF18900265633 /* GLKExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GLKExtension.swift; sourceTree = "<group>"; };
+		75B84B881F7F95840080207C /* Shader */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Shader; path = Resources/Shader; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,19 +88,11 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		7509AEFB1F7E067000F7A910 /* Shader */ = {
-			isa = PBXGroup;
-			children = (
-				7519C3F61F7F3E74003EE503 /* base.vs */,
-				7519C3F81F7F3E7E003EE503 /* base.fs */,
-			);
-			path = Shader;
-			sourceTree = "<group>";
-		};
 		754E1DE21F7DEA7200265633 = {
 			isa = PBXGroup;
 			children = (
-				7519C3FA1F7F442B003EE503 /* Shader */,
+				75B84B881F7F95840080207C /* Shader */,
+				75B84B841F7F945D0080207C /* Utilities */,
 				754E1DED1F7DEA7200265633 /* MRBasics */,
 				754E1E021F7DEA7200265633 /* MRBasicsTests */,
 				754E1E0D1F7DEA7200265633 /* MRBasicsUITests */,
@@ -124,7 +114,6 @@
 		754E1DED1F7DEA7200265633 /* MRBasics */ = {
 			isa = PBXGroup;
 			children = (
-				7509AEFB1F7E067000F7A910 /* Shader */,
 				754E1DEE1F7DEA7200265633 /* AppDelegate.swift */,
 				754E1DF01F7DEA7200265633 /* ViewController.swift */,
 				7519C3F41F7F3ADB003EE503 /* MyGLBase.swift */,
@@ -162,6 +151,22 @@
 				754E1E1D1F7DEB2A00265633 /* OpenGLES.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		75B84B831F7F94510080207C /* ObjLoader */ = {
+			isa = PBXGroup;
+			children = (
+				751DD6251F7F96190005D864 /* ObjLoader.swift */,
+			);
+			path = ObjLoader;
+			sourceTree = "<group>";
+		};
+		75B84B841F7F945D0080207C /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				75B84B831F7F94510080207C /* ObjLoader */,
+			);
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -271,11 +276,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7519C3FB1F7F442B003EE503 /* Shader in Resources */,
+				75B84B891F7F95850080207C /* Shader in Resources */,
 				754E1DF91F7DEA7200265633 /* LaunchScreen.storyboard in Resources */,
-				7519C3F71F7F3E74003EE503 /* base.vs in Resources */,
 				754E1DF61F7DEA7200265633 /* Assets.xcassets in Resources */,
-				7519C3F91F7F3E7E003EE503 /* base.fs in Resources */,
 				754E1DF41F7DEA7200265633 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -303,6 +306,7 @@
 			files = (
 				754E1E221F7DF18900265633 /* GLKExtension.swift in Sources */,
 				7519C3F51F7F3ADB003EE503 /* MyGLBase.swift in Sources */,
+				751DD6261F7F96190005D864 /* ObjLoader.swift in Sources */,
 				754E1DF11F7DEA7200265633 /* ViewController.swift in Sources */,
 				754E1DEF1F7DEA7200265633 /* AppDelegate.swift in Sources */,
 			);
