@@ -21,20 +21,14 @@ class ViewController: GLKViewController {
 
     var vertexBufferId = GLuint()
     var baseEffect = GLKBaseEffect()
+    var shader : BaseEffect!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let view = self.view as! GLKView
-        view.context = EAGLContext(api: .openGLES3)!
-        EAGLContext.setCurrent(view.context)
-
-        baseEffect.useConstantColor = GLboolean(GL_TRUE)
-        baseEffect.constantColor = GLKVector4Make(1, 0, 1, 1)
-
-        glGenBuffers(1, &vertexBufferId)
-        glBindBuffer(GLenum(GL_ARRAY_BUFFER), vertexBufferId)
-        glBufferData(GLenum(GL_ARRAY_BUFFER), vertices.count * MemoryLayout<GLKVector3>.size, vertices, GLenum(GL_STATIC_DRAW))
+        setupGLContext()
+        setupShader()
+        setupBuffer()
 
         glBindBuffer(GLenum(GL_ARRAY_BUFFER), 0)
     }
@@ -44,10 +38,32 @@ class ViewController: GLKViewController {
 
         glClearColor(1.0, 0.0, 0.0, 1.0);
         glClear(GLenum(GL_COLOR_BUFFER_BIT))
+
+        shader.prepareToDraw()
+
         glBindBuffer(GLenum(GL_ARRAY_BUFFER), vertexBufferId)
-        glEnableVertexAttribArray(0)
-        glVertexAttribPointer(0, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<GLKVector3>.size), nil)
+        let locVertPos = GLuint(glGetAttribLocation(shader.ProgramId(), "vertPos"))
+        glEnableVertexAttribArray(locVertPos)
+        glVertexAttribPointer(locVertPos, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<GLKVector3>.size), nil)
         glDrawArrays(GLenum(GL_TRIANGLE_FAN), 0, GLsizei(vertices.count))
+    }
+}
+
+extension ViewController {
+    func setupGLContext() {
+        let view = self.view as! GLKView
+        view.context = EAGLContext(api: .openGLES3)!
+        EAGLContext.setCurrent(view.context)
+    }
+
+    func setupShader() {
+        self.shader = BaseEffect(vertexShader: "Shader/base.vs", fragmentShader: "Shader/base.fs")
+    }
+
+    func setupBuffer() {
+        glGenBuffers(1, &vertexBufferId)
+        glBindBuffer(GLenum(GL_ARRAY_BUFFER), vertexBufferId)
+        glBufferData(GLenum(GL_ARRAY_BUFFER), vertices.count * MemoryLayout<GLKVector3>.size, vertices, GLenum(GL_STATIC_DRAW))
     }
 }
 

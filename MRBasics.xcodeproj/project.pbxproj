@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7519C3F51F7F3ADB003EE503 /* MyGLBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7519C3F41F7F3ADB003EE503 /* MyGLBase.swift */; };
+		7519C3F71F7F3E74003EE503 /* base.vs in Resources */ = {isa = PBXBuildFile; fileRef = 7519C3F61F7F3E74003EE503 /* base.vs */; };
+		7519C3F91F7F3E7E003EE503 /* base.fs in Resources */ = {isa = PBXBuildFile; fileRef = 7519C3F81F7F3E7E003EE503 /* base.fs */; };
+		7519C3FB1F7F442B003EE503 /* Shader in Resources */ = {isa = PBXBuildFile; fileRef = 7519C3FA1F7F442B003EE503 /* Shader */; };
 		754E1DEF1F7DEA7200265633 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 754E1DEE1F7DEA7200265633 /* AppDelegate.swift */; };
 		754E1DF11F7DEA7200265633 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 754E1DF01F7DEA7200265633 /* ViewController.swift */; };
 		754E1DF41F7DEA7200265633 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 754E1DF21F7DEA7200265633 /* Main.storyboard */; };
@@ -37,6 +41,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7519C3F41F7F3ADB003EE503 /* MyGLBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyGLBase.swift; sourceTree = "<group>"; };
+		7519C3F61F7F3E74003EE503 /* base.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = base.vs; sourceTree = "<group>"; };
+		7519C3F81F7F3E7E003EE503 /* base.fs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = base.fs; sourceTree = "<group>"; };
+		7519C3FA1F7F442B003EE503 /* Shader */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Shader; path = MRBasics/Shader; sourceTree = "<group>"; };
 		754E1DEB1F7DEA7200265633 /* MRBasics.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MRBasics.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		754E1DEE1F7DEA7200265633 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		754E1DF01F7DEA7200265633 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -85,6 +93,8 @@
 		7509AEFB1F7E067000F7A910 /* Shader */ = {
 			isa = PBXGroup;
 			children = (
+				7519C3F61F7F3E74003EE503 /* base.vs */,
+				7519C3F81F7F3E7E003EE503 /* base.fs */,
 			);
 			path = Shader;
 			sourceTree = "<group>";
@@ -92,6 +102,7 @@
 		754E1DE21F7DEA7200265633 = {
 			isa = PBXGroup;
 			children = (
+				7519C3FA1F7F442B003EE503 /* Shader */,
 				754E1DED1F7DEA7200265633 /* MRBasics */,
 				754E1E021F7DEA7200265633 /* MRBasicsTests */,
 				754E1E0D1F7DEA7200265633 /* MRBasicsUITests */,
@@ -116,6 +127,7 @@
 				7509AEFB1F7E067000F7A910 /* Shader */,
 				754E1DEE1F7DEA7200265633 /* AppDelegate.swift */,
 				754E1DF01F7DEA7200265633 /* ViewController.swift */,
+				7519C3F41F7F3ADB003EE503 /* MyGLBase.swift */,
 				754E1E211F7DF18900265633 /* GLKExtension.swift */,
 				754E1DF21F7DEA7200265633 /* Main.storyboard */,
 				754E1DF51F7DEA7200265633 /* Assets.xcassets */,
@@ -259,8 +271,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7519C3FB1F7F442B003EE503 /* Shader in Resources */,
 				754E1DF91F7DEA7200265633 /* LaunchScreen.storyboard in Resources */,
+				7519C3F71F7F3E74003EE503 /* base.vs in Resources */,
 				754E1DF61F7DEA7200265633 /* Assets.xcassets in Resources */,
+				7519C3F91F7F3E7E003EE503 /* base.fs in Resources */,
 				754E1DF41F7DEA7200265633 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -287,6 +302,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				754E1E221F7DF18900265633 /* GLKExtension.swift in Sources */,
+				7519C3F51F7F3ADB003EE503 /* MyGLBase.swift in Sources */,
 				754E1DF11F7DEA7200265633 /* ViewController.swift in Sources */,
 				754E1DEF1F7DEA7200265633 /* AppDelegate.swift in Sources */,
 			);
