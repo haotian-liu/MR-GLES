@@ -16,12 +16,12 @@ class BaseEffect {
         self.compile(vertexShader: vertexShader, fragmentShader: fragmentShader)
     }
 
-    func prepareToDraw() {
+    func Activate() {
         glUseProgram(self.programId)
     }
 
-    func ProgramId() -> GLuint {
-        return programId
+    func Deactivate() {
+        glUseProgram(0)
     }
 }
 

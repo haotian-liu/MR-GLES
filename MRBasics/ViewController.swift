@@ -42,8 +42,7 @@ class ViewController: GLKViewController {
         glClearColor(1.0, 1.0, 1.0, 1.0);
         glClear(GLenum(GL_COLOR_BUFFER_BIT))
 
-        shader.prepareToDraw()
-
+        shader.Activate()
         glBindVertexArray(VAO)
         glDrawElements(GLenum(GL_TRIANGLES), GLsizei(vertIndex.count), GLenum(GL_UNSIGNED_INT), nil)
     }
@@ -71,7 +70,7 @@ extension ViewController {
 
         glBindBuffer(GLenum(GL_ARRAY_BUFFER), VBO[1])
         glBufferData(GLenum(GL_ARRAY_BUFFER), vertices.count * MemoryLayout<GLKVector3>.size, vertices, GLenum(GL_STATIC_DRAW))
-        let locVertPos = GLuint(glGetAttribLocation(shader.ProgramId(), "vertPos"))
+        let locVertPos = GLuint(glGetAttribLocation(shader.programId, "vertPos"))
         glEnableVertexAttribArray(locVertPos)
         glVertexAttribPointer(locVertPos, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<GLKVector3>.size), nil)
 
