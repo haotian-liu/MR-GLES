@@ -33,6 +33,8 @@ class ViewController: GLKViewController {
         setupShader()
         setupBuffer()
 
+        let loader = ObjLoader(basePath: "./Model", source: "3d-model.obj")
+
         glBindBuffer(GLenum(GL_ARRAY_BUFFER), 0)
     }
 
