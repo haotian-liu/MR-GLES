@@ -21,6 +21,7 @@
 		754E1E221F7DF18900265633 /* GLKExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 754E1E211F7DF18900265633 /* GLKExtension.swift */; };
 		75B84B891F7F95850080207C /* Shader in Resources */ = {isa = PBXBuildFile; fileRef = 75B84B881F7F95840080207C /* Shader */; };
 		75D36FE01F8B97B200086F78 /* Model in Resources */ = {isa = PBXBuildFile; fileRef = 75D36FDF1F8B97B200086F78 /* Model */; };
+		75D36FE21F8B9AC600086F78 /* VScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75D36FE11F8B9AC600086F78 /* VScanner.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +62,7 @@
 		754E1E211F7DF18900265633 /* GLKExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GLKExtension.swift; sourceTree = "<group>"; };
 		75B84B881F7F95840080207C /* Shader */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Shader; path = Resources/Shader; sourceTree = "<group>"; };
 		75D36FDF1F8B97B200086F78 /* Model */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Model; path = Resources/Model; sourceTree = "<group>"; };
+		75D36FE11F8B9AC600086F78 /* VScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VScanner.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -160,6 +162,7 @@
 			isa = PBXGroup;
 			children = (
 				751DD6251F7F96190005D864 /* ObjLoader.swift */,
+				75D36FE11F8B9AC600086F78 /* VScanner.swift */,
 			);
 			path = ObjLoader;
 			sourceTree = "<group>";
@@ -313,6 +316,7 @@
 				751DD6261F7F96190005D864 /* ObjLoader.swift in Sources */,
 				754E1DF11F7DEA7200265633 /* ViewController.swift in Sources */,
 				754E1DEF1F7DEA7200265633 /* AppDelegate.swift in Sources */,
+				75D36FE21F8B9AC600086F78 /* VScanner.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

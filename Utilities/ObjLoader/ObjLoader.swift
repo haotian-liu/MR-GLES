@@ -7,9 +7,10 @@
 //
 
 import Foundation
+import GLKit
 
 class ObjLoader {
-    var scanner: Scanner
+    var scanner: VScanner
     let basePath: String
 
     init(basePath: String, source: String) {
@@ -18,9 +19,17 @@ class ObjLoader {
         let sourcePath = Bundle.main.path(forResource: basePath + "/" + source, ofType: nil)
         do {
             let sourceString = try String(contentsOfFile: sourcePath!, encoding: String.Encoding.utf8)
-            scanner = Scanner(string: sourceString)
+            scanner = VScanner(string: sourceString)
         } catch {
             exit(1)
+        }
+    }
+
+    func read() {
+        scanner.reset()
+        while scanner.isAvailable {
+            let marker = scanner.readMarker()
+            scanner.moveToNextLine()
         }
     }
 }
