@@ -22,6 +22,8 @@
 		75B84B891F7F95850080207C /* Shader in Resources */ = {isa = PBXBuildFile; fileRef = 75B84B881F7F95840080207C /* Shader */; };
 		75D36FE01F8B97B200086F78 /* Model in Resources */ = {isa = PBXBuildFile; fileRef = 75D36FDF1F8B97B200086F78 /* Model */; };
 		75D36FE21F8B9AC600086F78 /* VScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75D36FE11F8B9AC600086F78 /* VScanner.swift */; };
+		75E770F21F9E10CF001D5E8A /* ObjScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75E770F11F9E10CF001D5E8A /* ObjScanner.swift */; };
+		75E770F41F9E125E001D5E8A /* GeometryBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75E770F31F9E125E001D5E8A /* GeometryBase.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +65,8 @@
 		75B84B881F7F95840080207C /* Shader */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Shader; path = Resources/Shader; sourceTree = "<group>"; };
 		75D36FDF1F8B97B200086F78 /* Model */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Model; path = Resources/Model; sourceTree = "<group>"; };
 		75D36FE11F8B9AC600086F78 /* VScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VScanner.swift; sourceTree = "<group>"; };
+		75E770F11F9E10CF001D5E8A /* ObjScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjScanner.swift; sourceTree = "<group>"; };
+		75E770F31F9E125E001D5E8A /* GeometryBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometryBase.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -163,6 +167,8 @@
 			children = (
 				751DD6251F7F96190005D864 /* ObjLoader.swift */,
 				75D36FE11F8B9AC600086F78 /* VScanner.swift */,
+				75E770F11F9E10CF001D5E8A /* ObjScanner.swift */,
+				75E770F31F9E125E001D5E8A /* GeometryBase.swift */,
 			);
 			path = ObjLoader;
 			sourceTree = "<group>";
@@ -313,7 +319,9 @@
 			files = (
 				754E1E221F7DF18900265633 /* GLKExtension.swift in Sources */,
 				7519C3F51F7F3ADB003EE503 /* MyGLBase.swift in Sources */,
+				75E770F21F9E10CF001D5E8A /* ObjScanner.swift in Sources */,
 				751DD6261F7F96190005D864 /* ObjLoader.swift in Sources */,
+				75E770F41F9E125E001D5E8A /* GeometryBase.swift in Sources */,
 				754E1DF11F7DEA7200265633 /* ViewController.swift in Sources */,
 				754E1DEF1F7DEA7200265633 /* AppDelegate.swift in Sources */,
 				75D36FE21F8B9AC600086F78 /* VScanner.swift in Sources */,
