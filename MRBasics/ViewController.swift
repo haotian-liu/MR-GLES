@@ -68,7 +68,7 @@ class ViewController: GLKViewController, ARSessionDelegate {
         glActiveTexture(GLenum(GL_TEXTURE1))
         glBindTexture(GLenum(GL_TEXTURE_2D), self.uvTexture)
         glUniform1i(glGetUniformLocation(shader.programId, "uvTexture"), 1)
-        
+
         glDrawElements(GLenum(GL_TRIANGLES), GLsizei(vertIndex.count), GLenum(GL_UNSIGNED_INT), nil)
     }
 
@@ -80,7 +80,7 @@ class ViewController: GLKViewController, ARSessionDelegate {
 
         glBindTexture(GLenum(GL_TEXTURE_2D), self.yTexture)
         glTexImage2D(GLenum(GL_TEXTURE_2D), 0, GL_LUMINANCE, imageWidth, imageHeight, 0, GLenum(GL_LUMINANCE), GLenum(GL_UNSIGNED_BYTE), baseAddress)
-//        os_log("y width: %d height: %d\n", imageWidth, imageHeight)
+        //        os_log("y width: %d height: %d\n", imageWidth, imageHeight)
 
         imageWidth = GLsizei(CVPixelBufferGetWidthOfPlane(pixelBuffer, 1))
         imageHeight = GLsizei(CVPixelBufferGetHeightOfPlane(pixelBuffer, 1))
@@ -89,7 +89,7 @@ class ViewController: GLKViewController, ARSessionDelegate {
         glTexImage2D(GLenum(GL_TEXTURE_2D), 0, GL_LUMINANCE_ALPHA, imageWidth, imageHeight, 0, GLenum(GL_LUMINANCE_ALPHA), GLenum(GL_UNSIGNED_BYTE), laAddress)
         glBindTexture(GLenum(GL_TEXTURE_2D), 0)
 
-//        os_log("uv width: %d height: %d\n", imageWidth, imageHeight)
+        //        os_log("uv width: %d height: %d\n", imageWidth, imageHeight)
     }
 }
 
@@ -152,9 +152,4 @@ extension ViewController {
     func pauseAR() {
         self.arSession.pause()
     }
-
-    func renderARRealScene() {
-        //
-    }
 }
-

@@ -18,6 +18,8 @@
 		754E1E1E1F7DEB2A00265633 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 754E1E1D1F7DEB2A00265633 /* OpenGLES.framework */; };
 		754E1E201F7DEB3400265633 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 754E1E1F1F7DEB3400265633 /* GLKit.framework */; };
 		754E1E221F7DF18900265633 /* GLKExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 754E1E211F7DF18900265633 /* GLKExtension.swift */; };
+		7578533E1FFA3A40005ED22A /* ARViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7578533D1FFA3A40005ED22A /* ARViewController.swift */; };
+		757853421FFA5CDA005ED22A /* TextManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 757853411FFA5CDA005ED22A /* TextManager.swift */; };
 		75B84B891F7F95850080207C /* Shader in Resources */ = {isa = PBXBuildFile; fileRef = 75B84B881F7F95840080207C /* Shader */; };
 		75D36FE01F8B97B200086F78 /* Model in Resources */ = {isa = PBXBuildFile; fileRef = 75D36FDF1F8B97B200086F78 /* Model */; };
 /* End PBXBuildFile section */
@@ -57,6 +59,8 @@
 		754E1E1D1F7DEB2A00265633 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		754E1E1F1F7DEB3400265633 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 		754E1E211F7DF18900265633 /* GLKExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GLKExtension.swift; sourceTree = "<group>"; };
+		7578533D1FFA3A40005ED22A /* ARViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewController.swift; sourceTree = "<group>"; };
+		757853411FFA5CDA005ED22A /* TextManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextManager.swift; sourceTree = "<group>"; };
 		75B84B881F7F95840080207C /* Shader */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Shader; path = Resources/Shader; sourceTree = "<group>"; };
 		75D36FDF1F8B97B200086F78 /* Model */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Model; path = Resources/Model; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -123,6 +127,7 @@
 				754E1DF51F7DEA7200265633 /* Assets.xcassets */,
 				754E1DF71F7DEA7200265633 /* LaunchScreen.storyboard */,
 				754E1DFA1F7DEA7200265633 /* Info.plist */,
+				7578533D1FFA3A40005ED22A /* ARViewController.swift */,
 			);
 			path = MRBasics;
 			sourceTree = "<group>";
@@ -157,6 +162,7 @@
 		75B84B841F7F945D0080207C /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				757853411FFA5CDA005ED22A /* TextManager.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -299,8 +305,10 @@
 			files = (
 				754E1E221F7DF18900265633 /* GLKExtension.swift in Sources */,
 				7519C3F51F7F3ADB003EE503 /* MyGLBase.swift in Sources */,
+				757853421FFA5CDA005ED22A /* TextManager.swift in Sources */,
 				754E1DF11F7DEA7200265633 /* ViewController.swift in Sources */,
 				754E1DEF1F7DEA7200265633 /* AppDelegate.swift in Sources */,
+				7578533E1FFA3A40005ED22A /* ARViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
