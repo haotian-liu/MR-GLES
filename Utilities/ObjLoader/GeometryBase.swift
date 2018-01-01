@@ -34,15 +34,15 @@ func ==(lhs: VertexIndex, rhs: VertexIndex) -> Bool {
 
 class Shape {
     let name: String?
-    let vertices: [GLKVector3]
-    let normals: [GLKVector3]
+    let vertices: [GLKVector4]
+    let normals: [GLKVector4]
     let textureCoords: [GLKVector2]
 //    let material: Material?
     let faces: [[VertexIndex]]
 
     init(name: String?,
-                vertices: [GLKVector3],
-                normals: [GLKVector3],
+                vertices: [GLKVector4],
+                normals: [GLKVector4],
                 textureCoords: [GLKVector2],
 //                material: Material?,
                 faces: [[VertexIndex]]) {
@@ -54,8 +54,8 @@ class Shape {
         self.faces = faces
     }
 
-    func dataForVertexIndex(v: VertexIndex) -> (GLKVector3?, GLKVector3?, GLKVector2?) {
-        var data: (GLKVector3?, GLKVector3?, GLKVector2?) = (nil, nil, nil)
+    func dataForVertexIndex(v: VertexIndex) -> (GLKVector4?, GLKVector4?, GLKVector2?) {
+        var data: (GLKVector4?, GLKVector4?, GLKVector2?) = (nil, nil, nil)
 
         if let vi = v.vIndex {
             data.0 = vertices[Int(vi)]
@@ -73,4 +73,8 @@ class Shape {
     }
 }
 
-extension Shape: Equatable {}
+extension Shape: Equatable {
+    static func ==(lhs: Shape, rhs: Shape) -> Bool {
+        return true
+    }
+}

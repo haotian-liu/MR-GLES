@@ -8,21 +8,26 @@
 
 import UIKit
 import GLKit
+import ARKit
+import os.log
 
+class ViewController: GLKViewController, ARSessionDelegate {
 
-class ViewController: GLKViewController {
+    var arSession = ARSession()
 
     var vertices = [
-        GLKVector3(-0.5, -0.5, 0.0),
-        GLKVector3( 0.5, -0.5, 0.0),
-        GLKVector3( 0.5,  0.5, 0.0),
-        GLKVector3(-0.5,  0.5, 0.0)
+        GLKVector3(-1.0, -1.0, 0.0),
+        GLKVector3( 1.0, -1.0, 0.0),
+        GLKVector3( 1.0,  1.0, 0.0),
+        GLKVector3(-1.0,  1.0, 0.0)
     ]
 
     let vertIndex : [GLuint] = [ 0, 1, 2, 0, 2, 3 ]
 
     var VAO = GLuint()
     var VBO = Array<GLuint>(repeating: GLuint(), count: 3)
+
+    var yTexture = GLuint(), uvTexture = GLuint()
     var baseEffect = GLKBaseEffect()
     var shader : BaseEffect!
 
@@ -32,12 +37,19 @@ class ViewController: GLKViewController {
         setupGLContext()
         setupShader()
         setupBuffer()
-
-        let loader = ObjLoader(basePath: "./Model", source: "3d-model.obj")
-
-        loader.read()
+        setupAR()
 
         glBindBuffer(GLenum(GL_ARRAY_BUFFER), 0)
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        runAR()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        pauseAR()
     }
 
     override func glkView(_ view: GLKView, drawIn rect: CGRect) {
@@ -48,7 +60,36 @@ class ViewController: GLKViewController {
 
         shader.Activate()
         glBindVertexArray(VAO)
+
+        glActiveTexture(GLenum(GL_TEXTURE0))
+        glBindTexture(GLenum(GL_TEXTURE_2D), self.yTexture)
+        glUniform1i(glGetUniformLocation(shader.programId, "yTexture"), 0)
+
+        glActiveTexture(GLenum(GL_TEXTURE1))
+        glBindTexture(GLenum(GL_TEXTURE_2D), self.uvTexture)
+        glUniform1i(glGetUniformLocation(shader.programId, "uvTexture"), 1)
+        
         glDrawElements(GLenum(GL_TRIANGLES), GLsizei(vertIndex.count), GLenum(GL_UNSIGNED_INT), nil)
+    }
+
+    func session(_ session: ARSession, didUpdate frame: ARFrame) {
+        let pixelBuffer = frame.capturedImage
+        var imageWidth = GLsizei(CVPixelBufferGetWidthOfPlane(pixelBuffer, 0))
+        var imageHeight = GLsizei(CVPixelBufferGetHeightOfPlane(pixelBuffer, 0))
+        let baseAddress = CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 0)
+
+        glBindTexture(GLenum(GL_TEXTURE_2D), self.yTexture)
+        glTexImage2D(GLenum(GL_TEXTURE_2D), 0, GL_LUMINANCE, imageWidth, imageHeight, 0, GLenum(GL_LUMINANCE), GLenum(GL_UNSIGNED_BYTE), baseAddress)
+//        os_log("y width: %d height: %d\n", imageWidth, imageHeight)
+
+        imageWidth = GLsizei(CVPixelBufferGetWidthOfPlane(pixelBuffer, 1))
+        imageHeight = GLsizei(CVPixelBufferGetHeightOfPlane(pixelBuffer, 1))
+        let laAddress = CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 1)
+        glBindTexture(GLenum(GL_TEXTURE_2D), self.uvTexture)
+        glTexImage2D(GLenum(GL_TEXTURE_2D), 0, GL_LUMINANCE_ALPHA, imageWidth, imageHeight, 0, GLenum(GL_LUMINANCE_ALPHA), GLenum(GL_UNSIGNED_BYTE), laAddress)
+        glBindTexture(GLenum(GL_TEXTURE_2D), 0)
+
+//        os_log("uv width: %d height: %d\n", imageWidth, imageHeight)
     }
 }
 
@@ -79,6 +120,41 @@ extension ViewController {
         glVertexAttribPointer(locVertPos, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<GLKVector3>.size), nil)
 
         glBindVertexArray(0)
+    }
+
+    func setupAR() {
+        self.arSession.delegate = self
+
+        // MARK: setup ar textures
+        glGenTextures(1, &yTexture);
+        glBindTexture(GLenum(GL_TEXTURE_2D), self.yTexture)
+        glTexParameterf(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_S), GLfloat(GL_CLAMP_TO_EDGE))
+        glTexParameterf(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_T), GLfloat(GL_CLAMP_TO_EDGE))
+        glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MIN_FILTER), GL_LINEAR)
+        glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MAG_FILTER), GL_LINEAR)
+
+        glGenTextures(1, &uvTexture);
+        glBindTexture(GLenum(GL_TEXTURE_2D), self.uvTexture)
+        glTexParameterf(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_S), GLfloat(GL_CLAMP_TO_EDGE))
+        glTexParameterf(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_T), GLfloat(GL_CLAMP_TO_EDGE))
+        glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MIN_FILTER), GL_LINEAR)
+        glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MAG_FILTER), GL_LINEAR)
+
+        glBindTexture(GLenum(GL_TEXTURE_2D), 0)
+    }
+
+    func runAR() {
+        let config = ARWorldTrackingConfiguration()
+        config.planeDetection = .horizontal
+        self.arSession.run(config)
+    }
+
+    func pauseAR() {
+        self.arSession.pause()
+    }
+
+    func renderARRealScene() {
+        //
     }
 }
 

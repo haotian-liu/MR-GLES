@@ -117,7 +117,7 @@ class ObjLoader {
 
                 if ObjLoader.isFace(m) {
                     if let indices = try scanner.readFace() {
-                        state.faces.append(indices)
+                        state.faces += indices
                     }
 
                     scanner.moveToNextLine()
@@ -154,7 +154,6 @@ class ObjLoader {
 }
 
 extension ObjLoader {
-
     private func readVertex() throws -> GLKVector4? {
         do {
             return try scanner.readVertex()
