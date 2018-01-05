@@ -21,7 +21,6 @@
 		7578533E1FFA3A40005ED22A /* ARViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7578533D1FFA3A40005ED22A /* ARViewController.swift */; };
 		757853421FFA5CDA005ED22A /* TextManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 757853411FFA5CDA005ED22A /* TextManager.swift */; };
 		75B84B891F7F95850080207C /* Shader in Resources */ = {isa = PBXBuildFile; fileRef = 75B84B881F7F95840080207C /* Shader */; };
-		75D36FE01F8B97B200086F78 /* Model in Resources */ = {isa = PBXBuildFile; fileRef = 75D36FDF1F8B97B200086F78 /* Model */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,7 +61,6 @@
 		7578533D1FFA3A40005ED22A /* ARViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewController.swift; sourceTree = "<group>"; };
 		757853411FFA5CDA005ED22A /* TextManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextManager.swift; sourceTree = "<group>"; };
 		75B84B881F7F95840080207C /* Shader */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Shader; path = Resources/Shader; sourceTree = "<group>"; };
-		75D36FDF1F8B97B200086F78 /* Model */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Model; path = Resources/Model; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,7 +93,6 @@
 		754E1DE21F7DEA7200265633 = {
 			isa = PBXGroup;
 			children = (
-				75D36FDF1F8B97B200086F78 /* Model */,
 				75B84B881F7F95840080207C /* Shader */,
 				75B84B841F7F945D0080207C /* Utilities */,
 				754E1DED1F7DEA7200265633 /* MRBasics */,
@@ -274,7 +271,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				75D36FE01F8B97B200086F78 /* Model in Resources */,
 				75B84B891F7F95850080207C /* Shader in Resources */,
 				754E1DF91F7DEA7200265633 /* LaunchScreen.storyboard in Resources */,
 				754E1DF61F7DEA7200265633 /* Assets.xcassets in Resources */,
@@ -477,6 +473,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 629CNF9ZV4;
 				INFOPLIST_FILE = MRBasics/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.haotian.MRBasics;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -492,6 +489,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 629CNF9ZV4;
 				INFOPLIST_FILE = MRBasics/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.haotian.MRBasics;
 				PRODUCT_NAME = "$(TARGET_NAME)";

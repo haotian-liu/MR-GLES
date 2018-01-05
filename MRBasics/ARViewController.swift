@@ -50,9 +50,9 @@ extension ARViewController {
 //        os_log("tap point relative (%f, %f)\n", relativePoint.x, relativePoint.y)
         let results = currentFrame?.hitTest(relativePoint, types: ARHitTestResult.ResultType.existingPlaneUsingExtent)
         if let count = results?.count, count != 0 {
-//            os_log("Found %d planes", count)
+            os_log("Found %d planes", count)
         } else {
-//            os_log("No plane found")
+            os_log("No plane found")
         }
     }
 

@@ -42,6 +42,11 @@ class ViewController: GLKViewController, ARSessionDelegate {
         glBindBuffer(GLenum(GL_ARRAY_BUFFER), 0)
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        UIApplication.shared.isIdleTimerDisabled = true
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         runAR()
