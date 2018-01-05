@@ -8,6 +8,7 @@
 
 import Foundation
 import GLKit
+import os.log
 
 class BaseEffect {
     var programId : GLuint = 0
@@ -32,7 +33,7 @@ extension BaseEffect {
         do {
             let shaderString = try NSString(contentsOfFile: path!, encoding: String.Encoding.utf8.rawValue)
             let shaderId = glCreateShader(shaderType)
-            var shaderStringLength : GLint = GLint(Int32(shaderString.length))
+            var shaderStringLength = GLint(Int32(shaderString.length))
             var shaderCString = shaderString.utf8String
 
             glShaderSource(
@@ -42,19 +43,19 @@ extension BaseEffect {
                 &shaderStringLength)
 
             glCompileShader(shaderId)
-            var compileStatus : GLint = 0
+            var compileStatus: GLint = 0
             glGetShaderiv(shaderId, GLenum(GL_COMPILE_STATUS), &compileStatus)
 
             if compileStatus == GL_FALSE {
-                var infoLength : GLsizei = 0
-                let bufferLength : GLsizei = 1024
+                var infoLength: GLsizei = 0
+                let bufferLength: GLsizei = 1024
                 glGetShaderiv(shaderId, GLenum(GL_INFO_LOG_LENGTH), &infoLength)
 
-                let info : [GLchar] = Array(repeating: GLchar(0), count: Int(bufferLength))
-                var actualLength : GLsizei = 0
+                let info: [GLchar] = Array(repeating: GLchar(0), count: Int(bufferLength))
+                var actualLength: GLsizei = 0
 
                 glGetShaderInfoLog(shaderId, bufferLength, &actualLength, UnsafeMutablePointer(mutating: info))
-                NSLog(String(validatingUTF8: info)!)
+                os_log("Shader error: %s", info)
                 exit(1)
             }
 
@@ -75,14 +76,14 @@ extension BaseEffect {
 
         glLinkProgram(self.programId)
 
-        var linkStatus : GLint = 0
+        var linkStatus: GLint = 0
         glGetProgramiv(self.programId, GLenum(GL_LINK_STATUS), &linkStatus)
         if linkStatus == GL_FALSE {
             var infoLength : GLsizei = 0
             let bufferLength : GLsizei = 1024
             glGetProgramiv(self.programId, GLenum(GL_INFO_LOG_LENGTH), &infoLength)
 
-            let info : [GLchar] = Array(repeating: GLchar(0), count: Int(bufferLength))
+            let info: [GLchar] = Array(repeating: GLchar(0), count: Int(bufferLength))
             var actualLength : GLsizei = 0
 
             glGetProgramInfoLog(self.programId, bufferLength, &actualLength, UnsafeMutablePointer(mutating: info))

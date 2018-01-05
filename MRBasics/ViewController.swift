@@ -22,14 +22,17 @@ class ViewController: GLKViewController, ARSessionDelegate {
         GLKVector3(-1.0,  1.0, 0.0)
     ]
 
-    let vertIndex : [GLuint] = [ 0, 1, 2, 0, 2, 3 ]
+    let vertIndex: [GLuint] = [ 0, 1, 2, 0, 2, 3 ]
 
     var VAO = GLuint()
     var VBO = Array<GLuint>(repeating: GLuint(), count: 3)
 
     var yTexture = GLuint(), uvTexture = GLuint()
     var baseEffect = GLKBaseEffect()
-    var shader : BaseEffect!
+    var shader: BaseEffect!
+
+    var viewMatrix = GLKMatrix4Identity, projectionMatrix = GLKMatrix4Identity
+    var viewport = CGRect()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,10 +61,16 @@ class ViewController: GLKViewController, ARSessionDelegate {
     }
 
     override func glkView(_ view: GLKView, drawIn rect: CGRect) {
+        super.glkView(view, drawIn: rect)
+
         baseEffect.prepareToDraw()
 
         glClearColor(1.0, 1.0, 1.0, 1.0);
-        glClear(GLenum(GL_COLOR_BUFFER_BIT))
+        glClear(GLenum(GL_COLOR_BUFFER_BIT) | GLenum(GL_DEPTH_BUFFER_BIT))
+
+        glDepthMask(GLboolean(GL_FALSE))
+
+        glViewport(GLint(self.viewport.origin.x), GLint(self.viewport.origin.y), GLsizei(self.viewport.size.width), GLsizei(self.viewport.size.height))
 
         shader.Activate()
         glBindVertexArray(VAO)
@@ -75,6 +84,7 @@ class ViewController: GLKViewController, ARSessionDelegate {
         glUniform1i(glGetUniformLocation(shader.programId, "uvTexture"), 1)
 
         glDrawElements(GLenum(GL_TRIANGLES), GLsizei(vertIndex.count), GLenum(GL_UNSIGNED_INT), nil)
+        glDepthMask(GLboolean(GL_TRUE))
     }
 
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
@@ -93,8 +103,20 @@ class ViewController: GLKViewController, ARSessionDelegate {
         glBindTexture(GLenum(GL_TEXTURE_2D), self.uvTexture)
         glTexImage2D(GLenum(GL_TEXTURE_2D), 0, GL_LUMINANCE_ALPHA, imageWidth, imageHeight, 0, GLenum(GL_LUMINANCE_ALPHA), GLenum(GL_UNSIGNED_BYTE), laAddress)
         glBindTexture(GLenum(GL_TEXTURE_2D), 0)
-
         //        os_log("uv width: %d height: %d\n", imageWidth, imageHeight)
+
+        // set up viewport
+        setupViewport(imageSize: CGSize(width: CGFloat(imageHeight), height: CGFloat(imageWidth)))
+
+        // set up view matrix
+        self.viewMatrix = GLKMatrix4(frame.camera.transform.inverse)
+        let forward = GLKVector3Make(-viewMatrix.m13, -viewMatrix.m23, -viewMatrix.m33)
+        let rotationMatrix = GLKMatrix4MakeRotation(Float.pi / 2, forward.x, forward.y, forward.z)
+        self.viewMatrix = rotationMatrix * self.viewMatrix
+    }
+
+    func session(_ session: ARSession, cameraDidChangeTrackingState camera: ARCamera) {
+        self.projectionMatrix = GLKMatrix4(camera.projectionMatrix(for: .portrait, viewportSize: self.viewport.size, zNear: 0.1, zFar: 1000.0))
     }
 }
 
@@ -103,6 +125,21 @@ extension ViewController {
         let view = self.view as! GLKView
         view.context = EAGLContext(api: .openGLES3)!
         EAGLContext.setCurrent(view.context)
+    }
+
+    func setupViewport(imageSize: CGSize) {
+        let originalWidth = self.view.frame.size.width * UIScreen.main.scale
+        let originalHeight = self.view.frame.size.height * UIScreen.main.scale
+        let widthScale = originalWidth / imageSize.width
+        let heightScale = originalHeight / imageSize.height
+        let scale = widthScale > heightScale ? widthScale : heightScale
+
+        let width = imageSize.width * scale
+        let height = imageSize.height * scale
+        let x = (originalWidth - width) / 2.0
+        let y = (originalHeight - height) / 2.0
+
+        self.viewport = CGRect(x: x, y: y, width: width, height: height)
     }
 
     func setupShader() {
@@ -151,6 +188,7 @@ extension ViewController {
     func runAR() {
         let config = ARWorldTrackingConfiguration()
         config.planeDetection = .horizontal
+        config.worldAlignment = .gravity
         self.arSession.run(config)
     }
 

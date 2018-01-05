@@ -13,6 +13,7 @@ import os.log
 class ARViewController: ViewController {
     var objects = [ARAnchor:Int]()
     var textManager: TextManager!
+    var boxes = Boxes()
 
     @IBOutlet weak var messageLabel: UILabel!
     @IBOutlet weak var messagePanel: UIVisualEffectView!
@@ -26,10 +27,39 @@ class ARViewController: ViewController {
         self.view.isUserInteractionEnabled = true
 
         setupUIControls()
+        boxes.setupShader()
+        boxes.setupBuffer()
     }
 
     override func glkView(_ view: GLKView, drawIn rect: CGRect) {
         super.glkView(view, drawIn: rect)
+
+        glViewport(GLint(self.viewport.origin.x), GLint(self.viewport.origin.y), GLsizei(self.viewport.size.width), GLsizei(self.viewport.size.height))
+        glDepthMask(GLboolean(GL_TRUE))
+        glEnable(GLenum(GL_DEPTH_TEST))
+        boxes.draw()
+    }
+
+    override func session(_ session: ARSession, didUpdate frame: ARFrame) {
+        super.session(session, didUpdate: frame)
+        boxes.updateMatrix(type: .view, mat: self.viewMatrix)
+    }
+
+    override func session(_ session: ARSession, cameraDidChangeTrackingState camera: ARCamera) {
+        super.session(session, cameraDidChangeTrackingState: camera)
+        boxes.updateMatrix(type: .projection, mat: self.projectionMatrix)
+
+        // change text manager status
+        textManager.showTrackingQualityInfo(for: camera.trackingState, autoHide: true)
+
+        switch camera.trackingState {
+        case .notAvailable:
+            fallthrough
+        case .limited:
+            textManager.escalateFeedback(for: camera.trackingState, inSeconds: 3.0)
+        case .normal:
+            textManager.cancelScheduledMessage(forType: .trackingStateEscalation)
+        }
     }
 }
 
@@ -50,22 +80,17 @@ extension ARViewController {
 //        os_log("tap point relative (%f, %f)\n", relativePoint.x, relativePoint.y)
         let results = currentFrame?.hitTest(relativePoint, types: ARHitTestResult.ResultType.existingPlaneUsingExtent)
         if let count = results?.count, count != 0 {
+            for result in results! {
+//                let transform = GLKMatrix4(result.worldTransform) * GLKMatrix4MakeScale(0.05, 0.05, 0.05)
+                let transform = GLKMatrix4(result.worldTransform)
+                transform.debug_log()
+                let anchor = ARAnchor(transform: result.worldTransform)
+                self.arSession.add(anchor: anchor)
+                boxes.addBox(transform: transform)
+            }
             os_log("Found %d planes", count)
         } else {
             os_log("No plane found")
-        }
-    }
-
-    func session(_ session: ARSession, cameraDidChangeTrackingState camera: ARCamera) {
-        textManager.showTrackingQualityInfo(for: camera.trackingState, autoHide: true)
-
-        switch camera.trackingState {
-        case .notAvailable:
-            fallthrough
-        case .limited:
-            textManager.escalateFeedback(for: camera.trackingState, inSeconds: 3.0)
-        case .normal:
-            textManager.cancelScheduledMessage(forType: .trackingStateEscalation)
         }
     }
 

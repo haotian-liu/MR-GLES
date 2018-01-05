@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		7519C3F51F7F3ADB003EE503 /* MyGLBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7519C3F41F7F3ADB003EE503 /* MyGLBase.swift */; };
+		754970C71FFF65D900F4F7C8 /* Boxes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 754970C61FFF65D900F4F7C8 /* Boxes.swift */; };
 		754E1DEF1F7DEA7200265633 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 754E1DEE1F7DEA7200265633 /* AppDelegate.swift */; };
 		754E1DF11F7DEA7200265633 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 754E1DF01F7DEA7200265633 /* ViewController.swift */; };
 		754E1DF41F7DEA7200265633 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 754E1DF21F7DEA7200265633 /* Main.storyboard */; };
@@ -42,6 +43,7 @@
 
 /* Begin PBXFileReference section */
 		7519C3F41F7F3ADB003EE503 /* MyGLBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyGLBase.swift; sourceTree = "<group>"; };
+		754970C61FFF65D900F4F7C8 /* Boxes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Boxes.swift; sourceTree = "<group>"; };
 		754E1DEB1F7DEA7200265633 /* MRBasics.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MRBasics.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		754E1DEE1F7DEA7200265633 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		754E1DF01F7DEA7200265633 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -160,6 +162,7 @@
 			isa = PBXGroup;
 			children = (
 				757853411FFA5CDA005ED22A /* TextManager.swift */,
+				754970C61FFF65D900F4F7C8 /* Boxes.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -302,6 +305,7 @@
 				754E1E221F7DF18900265633 /* GLKExtension.swift in Sources */,
 				7519C3F51F7F3ADB003EE503 /* MyGLBase.swift in Sources */,
 				757853421FFA5CDA005ED22A /* TextManager.swift in Sources */,
+				754970C71FFF65D900F4F7C8 /* Boxes.swift in Sources */,
 				754E1DF11F7DEA7200265633 /* ViewController.swift in Sources */,
 				754E1DEF1F7DEA7200265633 /* AppDelegate.swift in Sources */,
 				7578533E1FFA3A40005ED22A /* ARViewController.swift in Sources */,
