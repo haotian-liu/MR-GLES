@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		7519C3F51F7F3ADB003EE503 /* MyGLBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7519C3F41F7F3ADB003EE503 /* MyGLBase.swift */; };
 		754970C71FFF65D900F4F7C8 /* Boxes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 754970C61FFF65D900F4F7C8 /* Boxes.swift */; };
+		754970C9200083AC00F4F7C8 /* ModelIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 754970C8200083AC00F4F7C8 /* ModelIO.framework */; };
+		754970CB200083C300F4F7C8 /* Model in Resources */ = {isa = PBXBuildFile; fileRef = 754970CA200083C300F4F7C8 /* Model */; };
 		754E1DEF1F7DEA7200265633 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 754E1DEE1F7DEA7200265633 /* AppDelegate.swift */; };
 		754E1DF11F7DEA7200265633 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 754E1DF01F7DEA7200265633 /* ViewController.swift */; };
 		754E1DF41F7DEA7200265633 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 754E1DF21F7DEA7200265633 /* Main.storyboard */; };
@@ -44,6 +46,10 @@
 /* Begin PBXFileReference section */
 		7519C3F41F7F3ADB003EE503 /* MyGLBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyGLBase.swift; sourceTree = "<group>"; };
 		754970C61FFF65D900F4F7C8 /* Boxes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Boxes.swift; sourceTree = "<group>"; };
+		754970C8200083AC00F4F7C8 /* ModelIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ModelIO.framework; path = System/Library/Frameworks/ModelIO.framework; sourceTree = SDKROOT; };
+		754970CA200083C300F4F7C8 /* Model */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Model; path = Resources/Model; sourceTree = "<group>"; };
+		754970CC2000A20600F4F7C8 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
+		754970CE2000A20D00F4F7C8 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		754E1DEB1F7DEA7200265633 /* MRBasics.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MRBasics.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		754E1DEE1F7DEA7200265633 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		754E1DF01F7DEA7200265633 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -70,6 +76,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				754970C9200083AC00F4F7C8 /* ModelIO.framework in Frameworks */,
 				754E1E201F7DEB3400265633 /* GLKit.framework in Frameworks */,
 				754E1E1E1F7DEB2A00265633 /* OpenGLES.framework in Frameworks */,
 			);
@@ -95,6 +102,7 @@
 		754E1DE21F7DEA7200265633 = {
 			isa = PBXGroup;
 			children = (
+				754970CA200083C300F4F7C8 /* Model */,
 				75B84B881F7F95840080207C /* Shader */,
 				75B84B841F7F945D0080207C /* Utilities */,
 				754E1DED1F7DEA7200265633 /* MRBasics */,
@@ -152,6 +160,9 @@
 		754E1E1C1F7DEB2A00265633 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				754970CE2000A20D00F4F7C8 /* Metal.framework */,
+				754970CC2000A20600F4F7C8 /* MetalKit.framework */,
+				754970C8200083AC00F4F7C8 /* ModelIO.framework */,
 				754E1E1F1F7DEB3400265633 /* GLKit.framework */,
 				754E1E1D1F7DEB2A00265633 /* OpenGLES.framework */,
 			);
@@ -274,6 +285,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				754970CB200083C300F4F7C8 /* Model in Resources */,
 				75B84B891F7F95850080207C /* Shader in Resources */,
 				754E1DF91F7DEA7200265633 /* LaunchScreen.storyboard in Resources */,
 				754E1DF61F7DEA7200265633 /* Assets.xcassets in Resources */,
