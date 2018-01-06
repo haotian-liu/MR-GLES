@@ -37,6 +37,8 @@ class Boxes {
     private var VAO = GLuint()
     private var VBO = Array<GLuint>(repeating: GLuint(), count: 3)
     private var shader: BaseEffect!
+    private var textures = Array<GLuint>(repeating: GLuint(), count: 2)
+    private var hasTextures = [Bool]()
 
     private var viewMatrix = GLKMatrix4Identity, projectionMatrix = GLKMatrix4Identity
 
@@ -48,7 +50,7 @@ class Boxes {
     }
 
     func loadModel() {
-        guard let url = Bundle.main.url(forResource: "Model/787", withExtension: "obj") else {
+        guard let url = Bundle.main.url(forResource: "Model/basketball/basketball", withExtension: "obj") else {
             os_log("error loading model")
             exit(-1)
         }
@@ -82,6 +84,9 @@ class Boxes {
             guard let object = asset.object(at: index) as? MDLMesh else {
                 os_log("error loading object")
                 exit(-1)
+            }
+            for case let submesh as MDLSubmesh in object.submeshes! {
+                hasTextures.append(submesh.material!.name == "VRayMtl1SG")
             }
             os_log("Loaded MDLMesh with %d submeshes, %d vertex buffers, %d vertices", object.submeshes!.count, object.vertexBuffers.count, object.vertexCount)
             os_log("Loaded MDLMesh vertex descriptor attributes debug: %s %d %d", (object.vertexDescriptor.attributes[0] as! MDLVertexAttribute).name, (object.vertexDescriptor.attributes[0] as! MDLVertexAttribute).offset, (object.vertexDescriptor.attributes[0] as! MDLVertexAttribute).bufferIndex)
@@ -121,6 +126,11 @@ class Boxes {
 
         let mesh = meshes.first!
         let submesh = mesh.submeshes.first!
+
+        glGenTextures(2, &textures[0])
+
+        load(texture: textures[0], from: "Model/basketball/map_Ka.png")
+        load(texture: textures[1], from: "Model/basketball/map_bump.png")
 
 //        for submesh in mesh.submeshes {
 //            let buf = submesh.elementBuffer
@@ -185,11 +195,12 @@ class Boxes {
         /////////////////////////////////
         glBindVertexArray(VAO)
         let mesh = meshes[0], submeshes = mesh.submeshes
-        let elementCount = submeshes.reduce(0, {sum, e in
-            sum + e.elementCount
-        })
+//        let elementCount = submeshes.reduce(0, {sum, e in
+//            sum + e.elementCount
+//        })
         for transform in objects {
-            let modelMatrix = transform * GLKMatrix4MakeScale(0.0001, 0.0001, 0.0001)
+            let scaleFactor: Float = 0.005
+            let modelMatrix = transform * GLKMatrix4MakeScale(scaleFactor, scaleFactor, scaleFactor)
 //            let viewMatrix = GLKMatrix4MakeLookAt(3, 0, 0, 0, 0, 0, 0, 1, 0)
 //            let viewMatrix = GLKMatrix4Invert(self.viewMatrix, nil)
 //            let viewMatrix = self.viewMatrix
@@ -229,12 +240,43 @@ class Boxes {
 //            }
 //            let offset: CConstVoidPointer = COpaquePointer(UnsafePointer<Int>(submesh.elementBuffer.offset))
 //            glDrawElements(GLenum(GL_TRIANGLES), submesh.elementCount, GLenum(GL_UNSIGNED_INT), nil)
-            glDrawElements(GLenum(GL_TRIANGLES), elementCount, GLenum(GL_UNSIGNED_INT), nil)
+//            let t: UnsafePointer<Int> = submeshes.first!.elementBuffer.offset as CInt
+
+            glActiveTexture(GLenum(GL_TEXTURE0))
+            glBindTexture(GLenum(GL_TEXTURE_2D), textures[0])
+            glUniform1i(glGetUniformLocation(shader.programId, "mapKaSampler"), 0)
+            glActiveTexture(GLenum(GL_TEXTURE1))
+            glBindTexture(GLenum(GL_TEXTURE_2D), textures[1])
+            glUniform1i(glGetUniformLocation(shader.programId, "mapBumpSampler"), 0)
+            for (index, submesh) in submeshes.enumerated() {
+                glUniform1i(glGetUniformLocation(shader.programId, "hasTexture"), hasTextures[index] ? 1 : 0)
+                glDrawElements(GLenum(GL_TRIANGLES), submesh.elementCount, GLenum(GL_UNSIGNED_INT), UnsafeRawPointer(bitPattern: submesh.elementBuffer.offset))
+            }
+
+//            glDrawElements(GLenum(GL_TRIANGLES), elementCount, GLenum(GL_UNSIGNED_INT), nil)
         }
     }
 
     func addBox(transform: GLKMatrix4) {
         objects.append(transform)
         os_log("Current boxes: %d", objects.count)
+    }
+
+    func load(texture textureId: GLuint, from texturePath: String) {
+        let texture = MDLTexture(named: texturePath)!
+        let imageData = texture.texelDataWithTopLeftOrigin()!
+        glBindTexture(GLenum(GL_TEXTURE_2D), textureId)
+
+        glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MIN_FILTER), GL_LINEAR_MIPMAP_LINEAR)
+        glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MAG_FILTER), GL_LINEAR)
+
+        glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_S), GL_CLAMP_TO_EDGE)
+        glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_T), GL_CLAMP_TO_EDGE)
+
+        imageData.withUnsafeBytes { (ptr: UnsafePointer<GLubyte>) in
+            let rawPtr = UnsafeRawPointer(ptr)
+            glTexImage2D(GLenum(GL_TEXTURE_2D), 0, GL_RGBA, texture.dimensions.x, texture.dimensions.y, 0, GLenum(GL_RGBA), GLenum(GL_UNSIGNED_BYTE), rawPtr)
+        }
+        glGenerateMipmap(GLenum(GL_TEXTURE_2D))
     }
 }
