@@ -154,7 +154,7 @@ class Boxes {
     }
 
     func setupShader() {
-        self.shader = BaseEffect(vertexShader: "Shader/box.vs", fragmentShader: "Shader/box.fs")
+        self.shader = BaseEffect(vertexShader: "Shader/phong.vs", fragmentShader: "Shader/phong.fs")
     }
 
     func updateMatrix(type: MatrixType, mat: GLKMatrix4) {
@@ -201,12 +201,32 @@ class Boxes {
 //            let projectionMatrix = GLKMatrix4MakePerspective(60.0, width / height, 0.001, 10.0)
 //            let projectionMatrix = self.projectionMatrix
 
-            var MVPMatrix = self.projectionMatrix * self.viewMatrix * modelMatrix
-            withUnsafePointer(to: &MVPMatrix) {
+            var in_model = modelMatrix
+            var in_view = self.viewMatrix
+            var in_proj = self.projectionMatrix
+
+            withUnsafePointer(to: &in_model) {
                 $0.withMemoryRebound(to: GLfloat.self, capacity: 16) {
-                    glUniformMatrix4fv(glGetUniformLocation(shader.programId, "MVPMatrix"), 1, GLboolean(GL_FALSE), $0)
+                    glUniformMatrix4fv(glGetUniformLocation(shader.programId, "modelMatrix"), 1, GLboolean(GL_FALSE), $0)
                 }
             }
+            withUnsafePointer(to: &in_view) {
+                $0.withMemoryRebound(to: GLfloat.self, capacity: 16) {
+                    glUniformMatrix4fv(glGetUniformLocation(shader.programId, "viewMatrix"), 1, GLboolean(GL_FALSE), $0)
+                }
+            }
+            withUnsafePointer(to: &in_proj) {
+                $0.withMemoryRebound(to: GLfloat.self, capacity: 16) {
+                    glUniformMatrix4fv(glGetUniformLocation(shader.programId, "projectionMatrix"), 1, GLboolean(GL_FALSE), $0)
+                }
+            }
+
+//            var MVPMatrix = self.projectionMatrix * self.viewMatrix * modelMatrix
+//            withUnsafePointer(to: &MVPMatrix) {
+//                $0.withMemoryRebound(to: GLfloat.self, capacity: 16) {
+//                    glUniformMatrix4fv(glGetUniformLocation(shader.programId, "MVPMatrix"), 1, GLboolean(GL_FALSE), $0)
+//                }
+//            }
 //            let offset: CConstVoidPointer = COpaquePointer(UnsafePointer<Int>(submesh.elementBuffer.offset))
 //            glDrawElements(GLenum(GL_TRIANGLES), submesh.elementCount, GLenum(GL_UNSIGNED_INT), nil)
             glDrawElements(GLenum(GL_TRIANGLES), elementCount, GLenum(GL_UNSIGNED_INT), nil)

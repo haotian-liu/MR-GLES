@@ -8,7 +8,6 @@
 
 import Foundation
 import GLKit
-import os.log
 
 class BaseEffect {
     var programId : GLuint = 0
@@ -55,7 +54,7 @@ extension BaseEffect {
                 var actualLength: GLsizei = 0
 
                 glGetShaderInfoLog(shaderId, bufferLength, &actualLength, UnsafeMutablePointer(mutating: info))
-                os_log("Shader error: %s", info)
+                NSLog(String(validatingUTF8: info)!)
                 exit(1)
             }
 
