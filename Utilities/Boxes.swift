@@ -189,7 +189,7 @@ class Boxes {
             sum + e.elementCount
         })
         for transform in objects {
-            let modelMatrix = transform * GLKMatrix4MakeRotation(Float.pi, 1.0, 0.0, 0.0) * GLKMatrix4MakeScale(0.0001, 0.0001, 0.0001)
+            let modelMatrix = transform * GLKMatrix4MakeScale(0.0001, 0.0001, 0.0001)
 //            let viewMatrix = GLKMatrix4MakeLookAt(3, 0, 0, 0, 0, 0, 0, 1, 0)
 //            let viewMatrix = GLKMatrix4Invert(self.viewMatrix, nil)
 //            let viewMatrix = self.viewMatrix

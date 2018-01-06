@@ -124,7 +124,11 @@ extension ViewController {
     func setupGLContext() {
         let view = self.view as! GLKView
         view.context = EAGLContext(api: .openGLES3)!
+        view.drawableDepthFormat = .format24;
+        view.drawableMultisample = .multisample4X;
         EAGLContext.setCurrent(view.context)
+
+        self.preferredFramesPerSecond = 60
     }
 
     func setupViewport(imageSize: CGSize) {
