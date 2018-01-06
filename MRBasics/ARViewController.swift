@@ -43,6 +43,7 @@ class ARViewController: ViewController {
     override func session(_ session: ARSession, didUpdate frame: ARFrame) {
         super.session(session, didUpdate: frame)
         boxes.updateMatrix(type: .view, mat: self.viewMatrix)
+        boxes.viewport = self.viewport
     }
 
     override func session(_ session: ARSession, cameraDidChangeTrackingState camera: ARCamera) {
@@ -83,7 +84,6 @@ extension ARViewController {
             for result in results! {
 //                let transform = GLKMatrix4(result.worldTransform) * GLKMatrix4MakeScale(0.05, 0.05, 0.05)
                 let transform = GLKMatrix4(result.worldTransform)
-                transform.debug_log()
                 let anchor = ARAnchor(transform: result.worldTransform)
                 self.arSession.add(anchor: anchor)
                 boxes.addBox(transform: transform)

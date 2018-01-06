@@ -38,7 +38,9 @@ class Boxes {
     private var VBO = Array<GLuint>(repeating: GLuint(), count: 3)
     private var shader: BaseEffect!
 
-    var viewMatrix = GLKMatrix4Identity, projectionMatrix = GLKMatrix4Identity
+    private var viewMatrix = GLKMatrix4Identity, projectionMatrix = GLKMatrix4Identity
+
+    var viewport = CGRect()
 
     init() {
 //        objects.append(GLKMatrix4MakeTranslation(1.0,  1.0, 1.0))
@@ -182,15 +184,24 @@ class Boxes {
 //        }
         /////////////////////////////////
         glBindVertexArray(VAO)
-        let mesh = meshes[0]
-        let elementCount = mesh.submeshes.reduce(0, {sum, e in
+        let mesh = meshes[0], submeshes = mesh.submeshes
+        let elementCount = submeshes.reduce(0, {sum, e in
             sum + e.elementCount
         })
-        for _ in mesh.submeshes {
-            let modelMatrix = GLKMatrix4Identity
-            let viewMatrix = GLKMatrix4MakeLookAt(1000, 1000, 0, 0, 0, 0, 0, 1, 0)
-            let projectionMatrix = GLKMatrix4MakePerspective(60.0, 4.0/3.0, 1, 5000.0)
-            var MVPMatrix = projectionMatrix * viewMatrix * modelMatrix
+        for transform in objects {
+            let modelMatrix = transform * GLKMatrix4MakeRotation(Float.pi, 1.0, 0.0, 0.0) * GLKMatrix4MakeScale(0.0001, 0.0001, 0.0001)
+//            let viewMatrix = GLKMatrix4MakeLookAt(3, 0, 0, 0, 0, 0, 0, 1, 0)
+//            let viewMatrix = GLKMatrix4Invert(self.viewMatrix, nil)
+//            let viewMatrix = self.viewMatrix
+//            let width = GLfloat(viewport.width)
+//            var height = GLfloat(viewport.height)
+//            if (height == 0.0) {
+//                height = 1.0
+//            }
+//            let projectionMatrix = GLKMatrix4MakePerspective(60.0, width / height, 0.001, 10.0)
+//            let projectionMatrix = self.projectionMatrix
+
+            var MVPMatrix = self.projectionMatrix * self.viewMatrix * modelMatrix
             withUnsafePointer(to: &MVPMatrix) {
                 $0.withMemoryRebound(to: GLfloat.self, capacity: 16) {
                     glUniformMatrix4fv(glGetUniformLocation(shader.programId, "MVPMatrix"), 1, GLboolean(GL_FALSE), $0)
@@ -199,7 +210,6 @@ class Boxes {
 //            let offset: CConstVoidPointer = COpaquePointer(UnsafePointer<Int>(submesh.elementBuffer.offset))
 //            glDrawElements(GLenum(GL_TRIANGLES), submesh.elementCount, GLenum(GL_UNSIGNED_INT), nil)
             glDrawElements(GLenum(GL_TRIANGLES), elementCount, GLenum(GL_UNSIGNED_INT), nil)
-            break
         }
     }
 

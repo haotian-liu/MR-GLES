@@ -188,7 +188,7 @@ extension ViewController {
     func runAR() {
         let config = ARWorldTrackingConfiguration()
         config.planeDetection = .horizontal
-        config.worldAlignment = .gravity
+//        config.worldAlignment = .gravity
         self.arSession.run(config)
     }
 
