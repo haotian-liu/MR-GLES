@@ -47,7 +47,7 @@ extension GLKMatrix4 {
     }
 
     init(_ object: matrix_float4x4) {
-        self = GLKMatrix4MakeWithRows(
+        self = GLKMatrix4MakeWithColumns(
             GLKVector4(object.columns.0),
             GLKVector4(object.columns.1),
             GLKVector4(object.columns.2),
