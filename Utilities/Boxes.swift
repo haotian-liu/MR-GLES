@@ -193,6 +193,9 @@ class Boxes {
 //            glDrawElements(GLenum(GL_TRIANGLES), GLsizei(faces.count), GLenum(GL_UNSIGNED_INT), nil)
 //        }
         /////////////////////////////////
+
+        glEnable(GLenum(GL_CULL_FACE))
+        glCullFace(GLenum(GL_BACK))
         glBindVertexArray(VAO)
         let mesh = meshes[0], submeshes = mesh.submeshes
 //        let elementCount = submeshes.reduce(0, {sum, e in
@@ -215,6 +218,19 @@ class Boxes {
             var in_model = modelMatrix
             var in_view = self.viewMatrix
             var in_proj = self.projectionMatrix
+
+            let a = in_proj.m.10
+            let b = in_proj.m.14
+
+//            let near = b / (a - 1)
+            let near: Float = 0.0001
+            let far = b / (a + 1)
+
+            let a_ = (near + far) / (near - far)
+            let b_ = (2.0 * near * far) / (near - far)
+
+            in_proj.m.10 = a_
+            in_proj.m.14 = b_
 
             withUnsafePointer(to: &in_model) {
                 $0.withMemoryRebound(to: GLfloat.self, capacity: 16) {
@@ -255,6 +271,7 @@ class Boxes {
 
 //            glDrawElements(GLenum(GL_TRIANGLES), elementCount, GLenum(GL_UNSIGNED_INT), nil)
         }
+        glDisable(GLenum(GL_CULL_FACE))
     }
 
     func addBox(transform: GLKMatrix4) {
