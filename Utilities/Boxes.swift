@@ -88,8 +88,9 @@ class Boxes {
             for case let submesh as MDLSubmesh in object.submeshes! {
                 hasTextures.append(submesh.material!.name == "VRayMtl1SG")
             }
+            object.addTangentBasis(forTextureCoordinateAttributeNamed: MDLVertexAttributeTextureCoordinate, tangentAttributeNamed: MDLVertexAttributeTangent, bitangentAttributeNamed: MDLVertexAttributeBitangent)
             os_log("Loaded MDLMesh with %d submeshes, %d vertex buffers, %d vertices", object.submeshes!.count, object.vertexBuffers.count, object.vertexCount)
-            os_log("Loaded MDLMesh vertex descriptor attributes debug: %s %d %d", (object.vertexDescriptor.attributes[0] as! MDLVertexAttribute).name, (object.vertexDescriptor.attributes[0] as! MDLVertexAttribute).offset, (object.vertexDescriptor.attributes[0] as! MDLVertexAttribute).bufferIndex)
+//            os_log("Loaded MDLMesh vertex descriptor attributes debug: %s %d %d", (object.vertexDescriptor.attributes[0] as! MDLVertexAttribute).name, (object.vertexDescriptor.attributes[0] as! MDLVertexAttribute).offset, (object.vertexDescriptor.attributes[0] as! MDLVertexAttribute).bufferIndex)
             do {
                 let mesh = try GLKMesh(mesh: object)
                 meshes.append(mesh)
@@ -156,6 +157,18 @@ class Boxes {
         let locVertTexture = GLuint(glGetAttribLocation(shader.programId, "vertUV"))
         glEnableVertexAttribArray(locVertTexture)
         glVertexAttribPointer(locVertTexture, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<GLKVector3>.size), nil)
+
+        // vertex tangent
+        glBindBuffer(GLenum(GL_ARRAY_BUFFER), mesh.vertexBuffers[3].glBufferName)
+        let locVertTangent = GLuint(glGetAttribLocation(shader.programId, "vertTangent"))
+        glEnableVertexAttribArray(locVertTangent)
+        glVertexAttribPointer(locVertTangent, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<GLKVector3>.size), nil)
+
+        // vertex bitangent
+        glBindBuffer(GLenum(GL_ARRAY_BUFFER), mesh.vertexBuffers[4].glBufferName)
+        let locVertBitangent = GLuint(glGetAttribLocation(shader.programId, "vertBitangent"))
+        glEnableVertexAttribArray(locVertBitangent)
+        glVertexAttribPointer(locVertBitangent, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<GLKVector3>.size), nil)
 
         // vertex index
         glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), submesh.elementBuffer.glBufferName)
@@ -263,7 +276,7 @@ class Boxes {
             glUniform1i(glGetUniformLocation(shader.programId, "mapKaSampler"), 0)
             glActiveTexture(GLenum(GL_TEXTURE1))
             glBindTexture(GLenum(GL_TEXTURE_2D), textures[1])
-            glUniform1i(glGetUniformLocation(shader.programId, "mapBumpSampler"), 0)
+            glUniform1i(glGetUniformLocation(shader.programId, "mapBumpSampler"), 1)
             for (index, submesh) in submeshes.enumerated() {
                 glUniform1i(glGetUniformLocation(shader.programId, "hasTexture"), hasTextures[index] ? 1 : 0)
                 glDrawElements(GLenum(GL_TRIANGLES), submesh.elementCount, GLenum(GL_UNSIGNED_INT), UnsafeRawPointer(bitPattern: submesh.elementBuffer.offset))
