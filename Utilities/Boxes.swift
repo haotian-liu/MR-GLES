@@ -289,7 +289,7 @@ class Boxes {
 
     func addBox(transform: GLKMatrix4) {
         objects.append(transform)
-        os_log("Current boxes: %d", objects.count)
+        os_log("Current objects: %d", objects.count)
     }
 
     func load(texture textureId: GLuint, from texturePath: String) {

@@ -78,6 +78,8 @@ extension ARViewController {
         let currentFrame = self.arSession.currentFrame
         let point = gesture.location(in: gesture.view)
         let relativePoint = CGPoint(x: point.y / (gesture.view?.frame.size.height)!, y: point.x / (gesture.view?.frame.size.width)!)
+        let adjustedPoint = CGPoint(x: relativePoint.y * self.viewport.size.width, y: (1.0 - relativePoint.x) * self.viewport.size.height)
+//        print("Adjusted point: \(adjustedPoint.x), \(adjustedPoint.y)")
 //        os_log("tap point relative (%f, %f)\n", relativePoint.x, relativePoint.y)
         let results = currentFrame?.hitTest(relativePoint, types: ARHitTestResult.ResultType.existingPlaneUsingExtent)
         if let count = results?.count, count != 0 {
@@ -92,6 +94,30 @@ extension ARViewController {
         } else {
             os_log("No plane found, start feature test")
 //            let featureHitTestResult = hitTest
+            /*
+                2. Collect more information about the environment by hit testing against
+                the feature point cloud, but do not return the result yet.
+             */
+            let featureHitTestResult = hitTestWithFeatures(adjustedPoint, coneOpeningAngleInDegrees: 18, minDistance: 0.2, maxDistance: 2.0).first
+            let featurePosition = featureHitTestResult?.position
+            if let featurePosition = featurePosition {
+                os_log("Feature point detection success!")
+                let transform = GLKMatrix4MakeTranslation(featurePosition.x, featurePosition.y, featurePosition.z)
+
+//                let anchor = ARAnchor(transform: transform)
+//                self.arSession.add(anchor: anchor)
+                boxes.addBox(transform: transform)
+            } else {
+                // last resort
+                let unfilteredFeatureHitTestResults = hitTestWithFeatures(adjustedPoint)
+                if let result = unfilteredFeatureHitTestResults.first?.position {
+                    os_log("Feature point unfiltered success!")
+                    let transform = GLKMatrix4MakeTranslation(result.x, result.y, result.z)
+                    boxes.addBox(transform: transform)
+                } else {
+                    os_log("Feature point failed!")
+                }
+            }
         }
     }
 
@@ -167,7 +193,6 @@ extension ARViewController {
         var ptr: [Int32] = [Int32(self.viewport.origin.x), Int32(self.viewport.origin.y), Int32(self.viewport.size.width), Int32(self.viewport.size.height)]
         let screenPosOnFarClippingPlane = GLKMathUnproject(positionVec, self.viewMatrix, self.projectionMatrix, &ptr[0], nil)
 
-
         let rayDirection = simd_normalize(float3(screenPosOnFarClippingPlane) - cameraPos)
         return HitTestRay(origin: cameraPos, direction: rayDirection)
     }
@@ -192,6 +217,8 @@ extension ARViewController {
         guard let features = self.arSession.currentFrame?.rawFeaturePoints, let ray = hitTestRayFromScreenPosition(point) else {
             return []
         }
+
+//        print("Hit test on point: \(point.x) \(point.y)")
 
         let maxAngleInDegrees = min(coneOpeningAngleInDegrees, 360) / 2
         let maxAngle = (maxAngleInDegrees / 180) * .pi
