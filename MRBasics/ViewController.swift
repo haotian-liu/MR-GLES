@@ -192,6 +192,7 @@ extension ViewController {
     func runAR() {
         let config = ARWorldTrackingConfiguration()
         config.planeDetection = .horizontal
+        config.isLightEstimationEnabled = true
 //        config.worldAlignment = .gravity
         self.arSession.run(config)
     }

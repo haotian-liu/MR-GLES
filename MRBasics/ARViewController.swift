@@ -42,6 +42,15 @@ class ARViewController: ViewController {
 
     override func session(_ session: ARSession, didUpdate frame: ARFrame) {
         super.session(session, didUpdate: frame)
+
+//        let baseIntensity: CGFloat = 40
+//        let lightEstimateIntensity: CGFloat
+//        if let lightEstimate = session.currentFrame?.lightEstimate {
+//            lightEstimateIntensity = lightEstimate.ambientIntensity / baseIntensity
+//        } else {
+//            lightEstimateIntensity = baseIntensity
+//        }
+
         boxes.updateMatrix(type: .view, mat: self.viewMatrix)
         boxes.viewport = self.viewport
     }
@@ -128,8 +137,6 @@ extension ARViewController {
 
 extension ARViewController {
     // Extension for more AR Feature detection stuff
-
-    // MARK: - Types
 
     struct HitTestRay {
         var origin: float3
@@ -257,7 +264,7 @@ extension ARViewController {
 
         let remainingResults = maxResults > 0 ? Array(sortedResults.prefix(maxResults)) : sortedResults
 
-        return Array(remainingResults)
+        return remainingResults
     }
 
     func hitTestWithFeatures(_ point: CGPoint) -> [FeatureHitTestResult] {
@@ -266,10 +273,6 @@ extension ARViewController {
                 return []
         }
 
-        /*
-         Find the feature point closest to the hit test ray, then create
-         a hit test result by finding the point on the ray closest to that feature.
-         */
         let possibleResults = features.points.map { featurePosition in
             return FeatureHitTestResult(featurePoint: featurePosition, ray: ray)
         }
