@@ -76,6 +76,12 @@ extension GLKMatrix4 {
     }
 }
 
+extension float3 {
+    init(_ object: GLKVector3) {
+        self = float3(x: Float(object.x), y: Float(object.y), z: object.z)
+    }
+}
+
 extension float4x4 {
     /**
      Treats matrix as a (right-hand column-major convention) transform matrix
