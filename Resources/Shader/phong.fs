@@ -33,9 +33,8 @@ void main() {
 //    vec3 KdColor = Kd;
 //    vec3 KsColor = Ks;
 //    vec3 KaColor = vec3(0.f);
-    vec2 texCoord_r = vec2(texCoord.x, -texCoord.y);
-    vec3 bump = texture(mapBumpSampler, texCoord_r).xyz * 2.0 - 1.0;
-    vec3 KaColor = hasTexture ? texture(mapKaSampler, texCoord_r).xyz : vec3(0.f, 0.f, 0.f);
+    vec3 bump = texture(mapBumpSampler, texCoord).xyz * 2.0 - 1.0;
+    vec3 KaColor = hasTexture ? texture(mapKaSampler, texCoord).xyz : vec3(0.f, 0.f, 0.f);
     vec3 KdColor = vec3(0.5f);
     vec3 KsColor = vec3(0.8f);
     vec3 lightDirection = vec3(1.f);
