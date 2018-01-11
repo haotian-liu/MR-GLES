@@ -44,6 +44,7 @@ class Boxes {
     private var meshes: [GLKMesh] = []
     private var objects: [ModelObject] = []
     private var selectedObject: ModelObject?
+    private var shadowPlanes: [GLKMesh?] = []
 
     private var VAO = GLuint()
     private var VBO = Array<GLuint>(repeating: GLuint(), count: 3)
@@ -106,6 +107,58 @@ class Boxes {
                 let mesh = try GLKMesh(mesh: object)
                 meshes.append(mesh)
                 os_log("Loaded GLKMesh with %d submeshes, %d vertex buffers, %d vertices", mesh.submeshes.count, mesh.vertexBuffers.count, mesh.vertexCount)
+
+                let shadowPlane = MDLMesh.newPlane(withDimensions: float2(x: 1.0, y: 1.0), segments: uint2(x: 10, y: 10), geometryType: .triangles, allocator: GLKMeshBufferAllocator())
+
+                let shadowMesh = try GLKMesh(mesh: shadowPlane)
+                shadowPlanes.append(shadowMesh)
+                os_log("Shadow GLKMesh with %d submeshes, %d vertex buffers, %d vertices", shadowMesh.submeshes.count, shadowMesh.vertexBuffers.count, shadowMesh.vertexCount)
+
+//                // generate shadow plane and bake light
+//                let asset = MDLAsset(bufferAllocator: GLKMeshBufferAllocator())
+//
+//                let shadowPlane = MDLMesh.newPlane(withDimensions: float2(x: 1.0, y: 1.0), segments: uint2(x: 100, y: 100), geometryType: .triangles, allocator: GLKMeshBufferAllocator())
+//                let lightSource = MDLAreaLight()
+//                // MDLLight Property
+//                lightSource.lightType = .rectangularArea
+//                lightSource.colorSpace = CGColorSpace.sRGB as String!
+//
+//                // MDLPhysicallyPlausibleLight Property
+//                lightSource.innerConeAngle = 120
+//                lightSource.outerConeAngle = 150
+//
+//                // MDLAreaLight Property
+//                lightSource.areaRadius = 2.0
+//                lightSource.aspect = 0.1
+//                lightSource.superEllipticPower = float2(x: 2.0, y: 2.0)
+//
+//                os_log("Loaded shadowMDLMesh with %d submeshes, %d vertex buffers, %d vertices", shadowPlane.submeshes!.count, shadowPlane.vertexBuffers.count, shadowPlane.vertexCount)
+//
+//                object.transform = MDLTransform(identity: ())
+//                object.transform!.setLocalTransform!(object.transform!.matrix)
+////                shadowPlane.transform = MDLTransform(identity: ())
+////                shadowPlane.transform!.setLocalTransform!(shadowPlane.transform!.matrix)
+////                shadowPlane.addNormals(withAttributeNamed: nil, creaseThreshold: 1.0)
+//                lightSource.transform = MDLTransform(identity: ())
+//                lightSource.transform!.setLocalTransform!(lightSource.transform!.matrix)
+//
+//                asset.add(object)
+//                asset.add(shadowPlane)
+//                asset.add(lightSource)
+//
+//                let lightsToConsider = [lightSource]
+//                let objectsToConsider = [object]
+//                let vertexAttributeNamed = MDLVertexAttributeOcclusionValue
+//                let submeshes = shadowPlane.submeshes!
+//                let material = (submeshes.firstObject as! MDLSubmesh).material!
+//                let materialPropertyNamed = material.name
+//                shadowPlane.generateLightMapVertexColorsWithLights(toConsider: lightsToConsider, objectsToConsider: [object], vertexAttributeNamed: MDLVertexAttributeColor)
+////                shadowPlane.generateLightMapTexture(withQuality: 0.1, lightsToConsider: lightsToConsider, objectsToConsider: [shadowPlane], vertexAttributeNamed: vertexAttributeNamed, materialPropertyNamed: materialPropertyNamed)
+//
+////                shadowPlane.generateAmbientOcclusionVertexColors(withQuality: 1, attenuationFactor: 0.98, objectsToConsider: [shadowPlane], vertexAttributeNamed: MDLVertexAttributeOcclusionValue)
+//
+//                let shadowMesh = try GLKMesh(mesh: shadowPlane)
+//                os_log("Baked shadowMesh with %d submeshes, %d vertex buffers, %d vertices", shadowMesh.submeshes.count, shadowMesh.vertexBuffers.count, shadowMesh.vertexCount)
             } catch {
                 os_log("error converting GLKMesh")
                 print("caught: \(error)")
