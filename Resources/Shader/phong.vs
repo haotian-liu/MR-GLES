@@ -3,6 +3,7 @@
 uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
 uniform mat4 projectionMatrix;
+uniform mat3 modelViewMatrix;
 
 in vec3 vertPos;
 in vec3 vertNormal;
@@ -27,9 +28,18 @@ void main() {
     worldCoord = worldPos.xyz;
     eyeCoord = eyePos.xyz;
     texCoord = vertUV.xy;
-    normal = normalize(mat3(viewMatrix * modelMatrix) * vertNormal);
-    tangent = normalize(mat3(viewMatrix * modelMatrix) * vertTangent);
-    bitangent = normalize(mat3(viewMatrix * modelMatrix) * vertBitangent);
+//    normal = normalize(mat3(viewMatrix * modelMatrix) * vertNormal);
+//    tangent = normalize(mat3(viewMatrix * modelMatrix) * vertTangent);
+//    bitangent = normalize(mat3(viewMatrix * modelMatrix) * vertBitangent);
+
+    normal = normalize(modelViewMatrix * vertNormal);
+    tangent = normalize(modelViewMatrix * vertTangent);
+    bitangent = normalize(modelViewMatrix * vertBitangent);
+
+//    normal = normalize((modelViewMatrix * vec4(vertNormal, 1.f)).xyz);
+//    normal = ((modelViewMatrix * vec4(vertNormal, 1.f)).xyz);
+//    tangent = normalize((modelViewMatrix * vec4(vertTangent, 1.f)).xyz);
+//    bitangent = normalize((modelViewMatrix * vec4(vertBitangent, 1.f)).xyz);
 
     gl_Position = clipPos;
 }

@@ -243,6 +243,7 @@ class Boxes {
             var in_model = modelMatrix * GLKMatrix4MakeRotation(object.rotate, 0.0, 1.0, 0.0) * GLKMatrix4MakeScale(object.scaleBias, object.scaleBias, object.scaleBias)
             var in_view = self.viewMatrix
             var in_proj = self.projectionMatrix
+            var in_modelview = GLKMatrix3(in_view * in_model)
 
             let a = in_proj.m.10
             let b = in_proj.m.14
@@ -270,6 +271,11 @@ class Boxes {
             withUnsafePointer(to: &in_proj) {
                 $0.withMemoryRebound(to: GLfloat.self, capacity: 16) {
                     glUniformMatrix4fv(shader.getUniformLocation("projectionMatrix"), 1, GLboolean(GL_FALSE), $0)
+                }
+            }
+            withUnsafePointer(to: &in_modelview) {
+                $0.withMemoryRebound(to: GLfloat.self, capacity: 9) {
+                    glUniformMatrix3fv(shader.getUniformLocation("modelViewMatrix"), 1, GLboolean(GL_FALSE), $0)
                 }
             }
 

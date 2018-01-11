@@ -45,6 +45,18 @@ extension GLKMatrix3 {
     init(_ row0: GLKVector3, _ row1: GLKVector3, _ row2: GLKVector3) {
         self = GLKMatrix3MakeWithRows(row0, row1, row2)
     }
+
+    init(_ mat: GLKMatrix4) {
+        self = GLKMatrix4GetMatrix3(mat)
+    }
+
+    func debug_log() {
+        os_log("--------")
+        os_log("GLKMatrix3 Info")
+        os_log("%f %f %f", self.m.0, self.m.1, self.m.2)
+        os_log("%f %f %f", self.m.3, self.m.4, self.m.5)
+        os_log("%f %f %f", self.m.6, self.m.7, self.m.8)
+    }
 }
 
 extension GLKMatrix4 {
@@ -63,7 +75,7 @@ extension GLKMatrix4 {
 
     func debug_log() {
         os_log("--------")
-        os_log("Matrix Info")
+        os_log("GLKMatrix4 Info")
         os_log("%f %f %f %f", self.m.0, self.m.1, self.m.2, self.m.3)
         os_log("%f %f %f %f", self.m.4, self.m.5, self.m.6, self.m.7)
         os_log("%f %f %f %f", self.m.8, self.m.9, self.m.10, self.m.11)
