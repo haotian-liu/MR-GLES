@@ -10,6 +10,15 @@ import ModelIO
 import GLKit
 import os.log
 
+class ModelObject {
+    init(_ transform: GLKMatrix4) {
+        self.initialTransform = transform
+    }
+    var initialTransform: GLKMatrix4
+    var scaleBias: GLfloat = 1.0
+    var selected: Bool = false
+}
+
 class Boxes {
     private let vertices = [
         GLKVector3(-1.0,  1.0, -1.0),
@@ -32,7 +41,7 @@ class Boxes {
     ]
 
     private var meshes: [GLKMesh] = []
-    private var objects: [GLKMatrix4] = []
+    private var objects: [ModelObject] = []
 
     private var VAO = GLuint()
     private var VBO = Array<GLuint>(repeating: GLuint(), count: 3)
@@ -214,8 +223,9 @@ class Boxes {
 //        let elementCount = submeshes.reduce(0, {sum, e in
 //            sum + e.elementCount
 //        })
-        for transform in objects {
+        for object in objects {
             let scaleFactor: Float = 0.005
+            let transform = object.initialTransform
             let modelMatrix = transform * GLKMatrix4MakeScale(scaleFactor, scaleFactor, scaleFactor)
 //            let viewMatrix = GLKMatrix4MakeLookAt(3, 0, 0, 0, 0, 0, 0, 1, 0)
 //            let viewMatrix = GLKMatrix4Invert(self.viewMatrix, nil)
@@ -247,17 +257,17 @@ class Boxes {
 
             withUnsafePointer(to: &in_model) {
                 $0.withMemoryRebound(to: GLfloat.self, capacity: 16) {
-                    glUniformMatrix4fv(glGetUniformLocation(shader.programId, "modelMatrix"), 1, GLboolean(GL_FALSE), $0)
+                    glUniformMatrix4fv(shader.getUniformLocation("modelMatrix"), 1, GLboolean(GL_FALSE), $0)
                 }
             }
             withUnsafePointer(to: &in_view) {
                 $0.withMemoryRebound(to: GLfloat.self, capacity: 16) {
-                    glUniformMatrix4fv(glGetUniformLocation(shader.programId, "viewMatrix"), 1, GLboolean(GL_FALSE), $0)
+                    glUniformMatrix4fv(shader.getUniformLocation("viewMatrix"), 1, GLboolean(GL_FALSE), $0)
                 }
             }
             withUnsafePointer(to: &in_proj) {
                 $0.withMemoryRebound(to: GLfloat.self, capacity: 16) {
-                    glUniformMatrix4fv(glGetUniformLocation(shader.programId, "projectionMatrix"), 1, GLboolean(GL_FALSE), $0)
+                    glUniformMatrix4fv(shader.getUniformLocation("projectionMatrix"), 1, GLboolean(GL_FALSE), $0)
                 }
             }
 
@@ -273,12 +283,16 @@ class Boxes {
 
             glActiveTexture(GLenum(GL_TEXTURE0))
             glBindTexture(GLenum(GL_TEXTURE_2D), textures[0])
-            glUniform1i(glGetUniformLocation(shader.programId, "mapKaSampler"), 0)
+            glUniform1i(shader.getUniformLocation("mapKaSampler"), 0)
             glActiveTexture(GLenum(GL_TEXTURE1))
             glBindTexture(GLenum(GL_TEXTURE_2D), textures[1])
-            glUniform1i(glGetUniformLocation(shader.programId, "mapBumpSampler"), 1)
+            glUniform1i(shader.getUniformLocation("mapBumpSampler"), 1)
+
+            glUniform1i(shader.getUniformLocation("selected"), object.selected ? 1 : 0)
+
             for (index, submesh) in submeshes.enumerated() {
-                glUniform1i(glGetUniformLocation(shader.programId, "hasTexture"), hasTextures[index] ? 1 : 0)
+                glUniform1i(shader.getUniformLocation("hasTexture"), hasTextures[index] ? 1 : 0)
+
                 glDrawElements(GLenum(GL_TRIANGLES), submesh.elementCount, GLenum(GL_UNSIGNED_INT), UnsafeRawPointer(bitPattern: submesh.elementBuffer.offset))
             }
 
@@ -288,7 +302,7 @@ class Boxes {
     }
 
     func addBox(transform: GLKMatrix4) {
-        objects.append(transform)
+        objects.append(ModelObject(transform))
         os_log("Current objects: %d", objects.count)
     }
 

@@ -23,6 +23,10 @@ class BaseEffect {
     func Deactivate() {
         glUseProgram(0)
     }
+
+    func getUniformLocation(_ name: UnsafePointer<GLchar>!) -> Int32 {
+        return glGetUniformLocation(self.programId, name)
+    }
 }
 
 extension BaseEffect {

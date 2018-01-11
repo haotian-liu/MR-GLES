@@ -1,7 +1,7 @@
 #version 300 es
 precision mediump float;
 
-//uniform bool selected;
+uniform bool selected;
 //uniform vec3 lightDirection;
 //uniform float lightDistance;
 uniform sampler2D mapKaSampler;
@@ -39,7 +39,6 @@ void main() {
     vec3 KsColor = vec3(0.8f);
     vec3 lightDirection = vec3(1.f);
     float lightDistance = 1.2;
-    bool selected = false;
     float Shininess = 10.f;
 
 //    vec3 N = normal + bump;
