@@ -22,8 +22,16 @@ class ARViewController: ViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let gesture = UITapGestureRecognizer.init(target: self, action: #selector(self.handleTap(_:)))
-        self.view.addGestureRecognizer(gesture)
+
+        let tapGesture = UITapGestureRecognizer.init(target: self, action: #selector(self.handleTap(_:)))
+        self.view.addGestureRecognizer(tapGesture)
+
+        let rotateGesture = UIRotationGestureRecognizer.init(target: self, action: #selector(self.handleRotate(_:)))
+        self.view.addGestureRecognizer(rotateGesture)
+
+        let pinchGesture = UIPinchGestureRecognizer.init(target: self, action: #selector(self.handlePinch(_:)))
+        self.view.addGestureRecognizer(pinchGesture)
+
         self.view.isUserInteractionEnabled = true
 
         setupUIControls()
@@ -81,6 +89,24 @@ extension ARViewController {
         messagePanel.clipsToBounds = true
         messagePanel.isHidden = true
         messageLabel.text = ""
+    }
+
+    @objc func handleRotate(_ gesture: UIRotationGestureRecognizer) {
+        guard gesture.view != nil else { return }
+
+        if gesture.state == .began || gesture.state == .changed {
+            boxes.rotate(by: gesture.rotation)
+            gesture.rotation = 0
+        }
+    }
+
+    @objc func handlePinch(_ gesture: UIPinchGestureRecognizer) {
+        guard gesture.view != nil else { return }
+
+        if gesture.state == .began || gesture.state == .changed {
+            boxes.scale(by: gesture.scale)
+            gesture.scale = 1.0
+        }
     }
 
     @objc func handleTap(_ gesture: UITapGestureRecognizer) {

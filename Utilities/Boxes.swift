@@ -16,32 +16,34 @@ class ModelObject {
     }
     var initialTransform: GLKMatrix4
     var scaleBias: GLfloat = 1.0
+    var rotate: GLfloat = 0.0
     var selected: Bool = false
 }
 
 class Boxes {
-    private let vertices = [
-        GLKVector3(-1.0,  1.0, -1.0),
-        GLKVector3(-1.0,  1.0,  1.0),
-        GLKVector3(-1.0, -1.0,  1.0),
-        GLKVector3(-1.0, -1.0, -1.0),
-        GLKVector3( 1.0,  1.0, -1.0),
-        GLKVector3( 1.0,  1.0,  1.0),
-        GLKVector3( 1.0, -1.0,  1.0),
-        GLKVector3( 1.0, -1.0, -1.0),
-    ]
-
-    private let faces: [GLuint] = [
-        0, 1, 2, 0, 2, 3,
-        0, 3, 7, 0, 7, 4,
-        0, 1, 5, 0, 5, 4,
-        1, 2, 6, 1, 6, 5,
-        2, 6, 7, 2, 7, 3,
-        4, 5, 6, 4, 6, 7,
-    ]
+//    private let vertices = [
+//        GLKVector3(-1.0,  1.0, -1.0),
+//        GLKVector3(-1.0,  1.0,  1.0),
+//        GLKVector3(-1.0, -1.0,  1.0),
+//        GLKVector3(-1.0, -1.0, -1.0),
+//        GLKVector3( 1.0,  1.0, -1.0),
+//        GLKVector3( 1.0,  1.0,  1.0),
+//        GLKVector3( 1.0, -1.0,  1.0),
+//        GLKVector3( 1.0, -1.0, -1.0),
+//    ]
+//
+//    private let faces: [GLuint] = [
+//        0, 1, 2, 0, 2, 3,
+//        0, 3, 7, 0, 7, 4,
+//        0, 1, 5, 0, 5, 4,
+//        1, 2, 6, 1, 6, 5,
+//        2, 6, 7, 2, 7, 3,
+//        4, 5, 6, 4, 6, 7,
+//    ]
 
     private var meshes: [GLKMesh] = []
     private var objects: [ModelObject] = []
+    private var selectedObject: ModelObject?
 
     private var VAO = GLuint()
     private var VBO = Array<GLuint>(repeating: GLuint(), count: 3)
@@ -238,7 +240,7 @@ class Boxes {
 //            let projectionMatrix = GLKMatrix4MakePerspective(60.0, width / height, 0.001, 10.0)
 //            let projectionMatrix = self.projectionMatrix
 
-            var in_model = modelMatrix
+            var in_model = modelMatrix * GLKMatrix4MakeRotation(object.rotate, 0.0, 1.0, 0.0) * GLKMatrix4MakeScale(object.scaleBias, object.scaleBias, object.scaleBias)
             var in_view = self.viewMatrix
             var in_proj = self.projectionMatrix
 
@@ -302,10 +304,31 @@ class Boxes {
     }
 
     func addBox(transform: GLKMatrix4) {
-        objects.append(ModelObject(transform))
+        let object = ModelObject(transform)
+
+        if let lastObject = objects.last {
+            lastObject.selected = false
+        }
+        object.selected = true
+        selectedObject = object
+        objects.append(object)
         os_log("Current objects: %d", objects.count)
     }
 
+    func rotate(by degCGFloat: CGFloat) {
+        guard let object = selectedObject else { return }
+        let deg = GLfloat(degCGFloat)
+        object.rotate -= deg
+    }
+
+    func scale(by degCGFloat: CGFloat) {
+        guard let object = selectedObject else { return }
+        let deg = GLfloat(degCGFloat)
+        object.scaleBias *= deg
+    }
+}
+
+extension Boxes {
     func load(texture textureId: GLuint, from texturePath: String) {
         let texture = MDLTexture(named: texturePath)!
         let imageData = texture.texelDataWithTopLeftOrigin()!
