@@ -27,9 +27,11 @@ class ARViewController: ViewController {
         self.view.addGestureRecognizer(tapGesture)
 
         let rotateGesture = UIRotationGestureRecognizer.init(target: self, action: #selector(self.handleRotate(_:)))
+        rotateGesture.delegate = self
         self.view.addGestureRecognizer(rotateGesture)
 
         let pinchGesture = UIPinchGestureRecognizer.init(target: self, action: #selector(self.handlePinch(_:)))
+        pinchGesture.delegate = self
         self.view.addGestureRecognizer(pinchGesture)
 
         self.view.isUserInteractionEnabled = true

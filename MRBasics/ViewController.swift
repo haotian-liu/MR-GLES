@@ -208,3 +208,13 @@ extension ViewController {
         self.arSession.pause()
     }
 }
+
+extension ViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        if gestureRecognizer is UITapGestureRecognizer || otherGestureRecognizer is UITapGestureRecognizer {
+            // tap has no interaction with others
+            return false
+        }
+        return true
+    }
+}
