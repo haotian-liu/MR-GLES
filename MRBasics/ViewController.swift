@@ -215,6 +215,10 @@ extension ViewController: UIGestureRecognizerDelegate {
             // tap has no interaction with others
             return false
         }
-        return true
+
+        if (gestureRecognizer, otherGestureRecognizer) is (UIRotationGestureRecognizer, UIPinchGestureRecognizer) || (gestureRecognizer, otherGestureRecognizer) is (UIPinchGestureRecognizer, UIRotationGestureRecognizer) {
+            return true
+        }
+        return false
     }
 }
