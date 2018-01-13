@@ -15,6 +15,8 @@ class ARViewController: ViewController {
     var textManager: TextManager!
     var boxes = Boxes()
 
+    private var lastDetected: float3?
+
     @IBOutlet weak var messageLabel: UILabel!
     @IBOutlet weak var messagePanel: UIVisualEffectView!
 
@@ -24,6 +26,7 @@ class ARViewController: ViewController {
         super.viewDidLoad()
 
         let tapGesture = UITapGestureRecognizer.init(target: self, action: #selector(self.handleTap(_:)))
+        tapGesture.delegate = self
         self.view.addGestureRecognizer(tapGesture)
 
         let rotateGesture = UIRotationGestureRecognizer.init(target: self, action: #selector(self.handleRotate(_:)))
@@ -33,6 +36,10 @@ class ARViewController: ViewController {
         let pinchGesture = UIPinchGestureRecognizer.init(target: self, action: #selector(self.handlePinch(_:)))
         pinchGesture.delegate = self
         self.view.addGestureRecognizer(pinchGesture)
+
+        let panGesture = ThresholdPanGestureRecognizer.init(target: self, action: #selector(self.handlePan(_:)))
+        panGesture.delegate = self
+        self.view.addGestureRecognizer(panGesture)
 
         self.view.isUserInteractionEnabled = true
 
@@ -74,6 +81,23 @@ class ARViewController: ViewController {
 //            lightEstimateIntensity = baseIntensity
 //        }
 
+        // crazy test after each frame refresh!
+        let screenCenter = CGPoint(x: 0.5, y: 0.5)
+        let relativePoint = screenCenter
+        let adjustedPoint = CGPoint(x: relativePoint.y * self.viewport.size.width, y: (1.0 - relativePoint.x) * self.viewport.size.height)
+
+
+        let results = anchorHitTest(relativePoint, adjustedPoint)
+        for (transform, translation) in results {
+            if let transform = transform {
+                lastDetected = transform.translation
+                let anchor = ARAnchor(transform: transform)
+                self.arSession.add(anchor: anchor)
+            } else if let translation = translation {
+                lastDetected = translation
+            }
+        }
+
         boxes.updateMatrix(type: .view, mat: self.viewMatrix)
         boxes.viewport = self.viewport
     }
@@ -106,6 +130,26 @@ extension ARViewController {
         messageLabel.text = ""
     }
 
+    @objc func handlePan(_ gesture: ThresholdPanGestureRecognizer) {
+        guard gesture.view != nil else { return }
+
+        switch gesture.state {
+        case .began:
+            guard boxes.selectedObject == nil else {
+                print("pan triggered when other is selected!")
+                return
+            }
+            print("pan started!")
+            break
+        case .changed where gesture.isThresholdExceeded:
+            break
+        case .changed:
+            break
+        default:
+            break
+        }
+    }
+
     @objc func handleRotate(_ gesture: UIRotationGestureRecognizer) {
         guard gesture.view != nil else { return }
 
@@ -125,48 +169,58 @@ extension ARViewController {
     }
 
     @objc func handleTap(_ gesture: UITapGestureRecognizer) {
-        let currentFrame = self.arSession.currentFrame
         let point = gesture.location(in: gesture.view)
         let relativePoint = CGPoint(x: point.y / (gesture.view?.frame.size.height)!, y: point.x / (gesture.view?.frame.size.width)!)
         let adjustedPoint = CGPoint(x: relativePoint.y * self.viewport.size.width, y: (1.0 - relativePoint.x) * self.viewport.size.height)
 //        print("Adjusted point: \(adjustedPoint.x), \(adjustedPoint.y)")
-//        os_log("tap point relative (%f, %f)\n", relativePoint.x, relativePoint.y)
+//        os_log("tap point relative (%f, %f)\n", type: .debug, relativePoint.x, relativePoint.y)
+
+        let results = anchorHitTest(relativePoint, adjustedPoint)
+
+        for (index, (transform, translation)) in results.enumerated() {
+            if let transform = transform {
+                let anchor = ARAnchor(transform: transform)
+                self.arSession.add(anchor: anchor)
+                if index != 0 {
+                    // only add one box even if multiple planes detected
+                    boxes.addBox(translate: transform.translation)
+                }
+            } else if let translation = translation {
+                boxes.addBox(translate: translation)
+            }
+        }
+    }
+
+    func anchorHitTest(_ relativePoint: CGPoint, _ adjustedPoint: CGPoint, infinitePlane: Bool = false) -> [(float4x4?, float3?)] {
+        let currentFrame = self.arSession.currentFrame
         let results = currentFrame?.hitTest(relativePoint, types: ARHitTestResult.ResultType.existingPlaneUsingExtent)
         if let count = results?.count, count != 0 {
-            for result in results! {
-//                let transform = GLKMatrix4(result.worldTransform) * GLKMatrix4MakeScale(0.05, 0.05, 0.05)
-                let transform = GLKMatrix4(result.worldTransform)
-                let anchor = ARAnchor(transform: result.worldTransform)
-                self.arSession.add(anchor: anchor)
-                boxes.addBox(translate: result.worldTransform.translation)
-            }
-            os_log("Found %d planes", count)
+            os_log("ARKit original found %d planes", type: .debug, count)
+            return results!.map{ ($0.worldTransform, nil) }
         } else {
-            os_log("No plane found, start feature test")
-//            let featureHitTestResult = hitTest
-            /*
-                2. Collect more information about the environment by hit testing against
-                the feature point cloud, but do not return the result yet.
-             */
             let featureHitTestResult = hitTestWithFeatures(adjustedPoint, coneOpeningAngleInDegrees: 18, minDistance: 0.2, maxDistance: 2.0).first
             let featurePosition = featureHitTestResult?.position
-            if let featurePosition = featurePosition {
-                os_log("Feature point detection success!")
-                let transform = GLKMatrix4MakeTranslation(featurePosition.x, featurePosition.y, featurePosition.z)
 
-//                let anchor = ARAnchor(transform: transform)
-//                self.arSession.add(anchor: anchor)
-                boxes.addBox(translate: featurePosition)
-            } else {
-                // last resort
-                let unfilteredFeatureHitTestResults = hitTestWithFeatures(adjustedPoint)
-                if let result = unfilteredFeatureHitTestResults.first?.position {
-                    os_log("Feature point unfiltered success!")
-                    let transform = GLKMatrix4MakeTranslation(result.x, result.y, result.z)
-                    boxes.addBox(translate: result)
-                } else {
-                    os_log("Feature point failed!")
+            if infinitePlane || featurePosition == nil {
+                if let objectPosition = lastDetected,
+                    let pointOnInfinitePlane = hitTestWithInfiniteHorizontalPlane(adjustedPoint, objectPosition) {
+                    os_log("Infinite plane detection success!!", type: .debug)
+                    return [(nil, pointOnInfinitePlane)]
                 }
+            }
+
+            if let featurePosition = featurePosition {
+                os_log("Feature point detection success!", type: .debug)
+                return [(nil, featurePosition)]
+            }
+
+            let unfilteredFeatureHitTestResults = hitTestWithFeatures(adjustedPoint)
+            if let result = unfilteredFeatureHitTestResults.first?.position {
+                os_log("Feature point unfiltered success!", type: .debug)
+                return [(nil, result)]
+            } else {
+                os_log("Feature point detection failed!", type: .debug)
+                return [(nil, nil)]
             }
         }
     }

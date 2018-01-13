@@ -102,7 +102,7 @@ class ViewController: GLKViewController, ARSessionDelegate {
 
         glBindTexture(GLenum(GL_TEXTURE_2D), self.yTexture)
         glTexImage2D(GLenum(GL_TEXTURE_2D), 0, GL_LUMINANCE, imageWidth, imageHeight, 0, GLenum(GL_LUMINANCE), GLenum(GL_UNSIGNED_BYTE), baseAddress)
-        //        os_log("y width: %d height: %d\n", imageWidth, imageHeight)
+        //        os_log("y width: %d height: %d\n", type: .debug, imageWidth, imageHeight)
 
         imageWidth = GLsizei(CVPixelBufferGetWidthOfPlane(pixelBuffer, 1))
         imageHeight = GLsizei(CVPixelBufferGetHeightOfPlane(pixelBuffer, 1))
@@ -110,7 +110,7 @@ class ViewController: GLKViewController, ARSessionDelegate {
         glBindTexture(GLenum(GL_TEXTURE_2D), self.uvTexture)
         glTexImage2D(GLenum(GL_TEXTURE_2D), 0, GL_LUMINANCE_ALPHA, imageWidth, imageHeight, 0, GLenum(GL_LUMINANCE_ALPHA), GLenum(GL_UNSIGNED_BYTE), laAddress)
         glBindTexture(GLenum(GL_TEXTURE_2D), 0)
-        //        os_log("uv width: %d height: %d\n", imageWidth, imageHeight)
+        //        os_log("uv width: %d height: %d\n", type: .debug, imageWidth, imageHeight)
 
         // set up viewport
         setupViewport(imageSize: CGSize(width: CGFloat(imageHeight), height: CGFloat(imageWidth)))
@@ -211,12 +211,17 @@ extension ViewController {
 
 extension ViewController: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        if gestureRecognizer is UITapGestureRecognizer || otherGestureRecognizer is UITapGestureRecognizer {
-            // tap has no interaction with others
-            return false
-        }
-
         if (gestureRecognizer, otherGestureRecognizer) is (UIRotationGestureRecognizer, UIPinchGestureRecognizer) || (gestureRecognizer, otherGestureRecognizer) is (UIPinchGestureRecognizer, UIRotationGestureRecognizer) {
+            return true
+        }
+        if (gestureRecognizer, otherGestureRecognizer) is (UITapGestureRecognizer, ThresholdPanGestureRecognizer) || (gestureRecognizer, otherGestureRecognizer) is (ThresholdPanGestureRecognizer, UITapGestureRecognizer) {
+            return true
+        }
+        return false
+    }
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        if gestureRecognizer is ThresholdPanGestureRecognizer && otherGestureRecognizer is UITapGestureRecognizer {
             return true
         }
         return false

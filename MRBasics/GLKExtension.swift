@@ -54,11 +54,11 @@ extension GLKMatrix3 {
     }
 
     func debug_log() {
-        os_log("--------")
-        os_log("GLKMatrix3 Info")
-        os_log("%f %f %f", self.m.0, self.m.1, self.m.2)
-        os_log("%f %f %f", self.m.3, self.m.4, self.m.5)
-        os_log("%f %f %f", self.m.6, self.m.7, self.m.8)
+        os_log("--------", type: .debug)
+        os_log("GLKMatrix3 Info", type: .debug)
+        os_log("%f %f %f", type: .debug, self.m.0, self.m.1, self.m.2)
+        os_log("%f %f %f", type: .debug, self.m.3, self.m.4, self.m.5)
+        os_log("%f %f %f", type: .debug, self.m.6, self.m.7, self.m.8)
     }
 }
 
@@ -77,13 +77,13 @@ extension GLKMatrix4 {
     }
 
     func debug_log() {
-        os_log("--------")
-        os_log("GLKMatrix4 Info")
-        os_log("%f %f %f %f", self.m.0, self.m.1, self.m.2, self.m.3)
-        os_log("%f %f %f %f", self.m.4, self.m.5, self.m.6, self.m.7)
-        os_log("%f %f %f %f", self.m.8, self.m.9, self.m.10, self.m.11)
-        os_log("%f %f %f %f", self.m.12, self.m.13, self.m.14, self.m.15)
-        os_log("--------")
+        os_log("--------", type: .debug)
+        os_log("GLKMatrix4 Info", type: .debug)
+        os_log("%f %f %f %f", type: .debug, self.m.0, self.m.1, self.m.2, self.m.3)
+        os_log("%f %f %f %f", type: .debug, self.m.4, self.m.5, self.m.6, self.m.7)
+        os_log("%f %f %f %f", type: .debug, self.m.8, self.m.9, self.m.10, self.m.11)
+        os_log("%f %f %f %f", type: .debug, self.m.12, self.m.13, self.m.14, self.m.15)
+        os_log("--------", type: .debug)
     }
 
     static func * (left: GLKMatrix4, right: GLKMatrix4) -> GLKMatrix4 {
@@ -105,5 +105,11 @@ extension float4x4 {
     var translation: float3 {
         let translation = columns.3
         return float3(translation.x, translation.y, translation.z)
+    }
+}
+
+extension CGPoint {
+    var length: CGFloat {
+        return sqrt(x * x + y * y)
     }
 }

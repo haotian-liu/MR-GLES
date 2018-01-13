@@ -64,7 +64,7 @@ class Boxes {
 
     private var meshes: [GLKMesh] = []
     private var objects: [ModelObject] = []
-    private var selectedObject: ModelObject?
+    private(set) var selectedObject: ModelObject? = nil
 
     // shadow FBO
     private var FBO = GLuint()
@@ -98,7 +98,7 @@ class Boxes {
 
     func loadModel() {
         guard let url = Bundle.main.url(forResource: "Model/sofa/sofa", withExtension: "obj") else {
-            os_log("error loading model")
+            os_log("error loading model", type: .error)
             exit(-1)
         }
 
@@ -129,25 +129,25 @@ class Boxes {
         let asset = MDLAsset(url: url, vertexDescriptor: vertexDescriptor, bufferAllocator: GLKMeshBufferAllocator())
         for index in 0..<asset.count {
             guard let object = asset.object(at: index) as? MDLMesh else {
-                os_log("error loading object")
+                os_log("error loading object", type: .error)
                 exit(-1)
             }
             for case let submesh as MDLSubmesh in object.submeshes! {
                 hasTextures.append(submesh.material!.name == "VRayMtl1SG")
             }
 //            object.addTangentBasis(forTextureCoordinateAttributeNamed: MDLVertexAttributeTextureCoordinate, tangentAttributeNamed: MDLVertexAttributeTangent, bitangentAttributeNamed: MDLVertexAttributeBitangent)
-            os_log("Loaded MDLMesh with %d submeshes, %d vertex buffers, %d vertices", object.submeshes!.count, object.vertexBuffers.count, object.vertexCount)
-//            os_log("Loaded MDLMesh vertex descriptor attributes debug: %s %d %d", (object.vertexDescriptor.attributes[0] as! MDLVertexAttribute).name, (object.vertexDescriptor.attributes[0] as! MDLVertexAttribute).offset, (object.vertexDescriptor.attributes[0] as! MDLVertexAttribute).bufferIndex)
+            os_log("Loaded MDLMesh with %d submeshes, %d vertex buffers, %d vertices", type: .debug, object.submeshes!.count, object.vertexBuffers.count, object.vertexCount)
+//            os_log("Loaded MDLMesh vertex descriptor attributes debug: %s %d %d", type: .debug, (object.vertexDescriptor.attributes[0] as! MDLVertexAttribute).name, (object.vertexDescriptor.attributes[0] as! MDLVertexAttribute).offset, (object.vertexDescriptor.attributes[0] as! MDLVertexAttribute).bufferIndex)
             do {
                 let mesh = try GLKMesh(mesh: object)
                 meshes.append(mesh)
-                os_log("Loaded GLKMesh with %d submeshes, %d vertex buffers, %d vertices", mesh.submeshes.count, mesh.vertexBuffers.count, mesh.vertexCount)
+                os_log("Loaded GLKMesh with %d submeshes, %d vertex buffers, %d vertices", type: .debug, mesh.submeshes.count, mesh.vertexBuffers.count, mesh.vertexCount)
 
 //                let shadowPlane = MDLMesh.newPlane(withDimensions: float2(x: 1.0, y: 1.0), segments: uint2(x: 10, y: 10), geometryType: .triangles, allocator: GLKMeshBufferAllocator())
 //
 //                let shadowMesh = try GLKMesh(mesh: shadowPlane)
 //                shadowPlanes.append(shadowMesh)
-//                os_log("Shadow GLKMesh with %d submeshes, %d vertex buffers, %d vertices", shadowMesh.submeshes.count, shadowMesh.vertexBuffers.count, shadowMesh.vertexCount)
+//                os_log("Shadow GLKMesh with %d submeshes, %d vertex buffers, %d vertices", type: .debug, shadowMesh.submeshes.count, shadowMesh.vertexBuffers.count, shadowMesh.vertexCount)
 
 //                // generate shadow plane and bake light
 //                let asset = MDLAsset(bufferAllocator: GLKMeshBufferAllocator())
@@ -167,7 +167,7 @@ class Boxes {
 //                lightSource.aspect = 0.1
 //                lightSource.superEllipticPower = float2(x: 2.0, y: 2.0)
 //
-//                os_log("Loaded shadowMDLMesh with %d submeshes, %d vertex buffers, %d vertices", shadowPlane.submeshes!.count, shadowPlane.vertexBuffers.count, shadowPlane.vertexCount)
+//                os_log("Loaded shadowMDLMesh with %d submeshes, %d vertex buffers, %d vertices", type: .debug, shadowPlane.submeshes!.count, shadowPlane.vertexBuffers.count, shadowPlane.vertexCount)
 //
 //                object.transform = MDLTransform(identity: ())
 //                object.transform!.setLocalTransform!(object.transform!.matrix)
@@ -193,14 +193,14 @@ class Boxes {
 ////                shadowPlane.generateAmbientOcclusionVertexColors(withQuality: 1, attenuationFactor: 0.98, objectsToConsider: [shadowPlane], vertexAttributeNamed: MDLVertexAttributeOcclusionValue)
 //
 //                let shadowMesh = try GLKMesh(mesh: shadowPlane)
-//                os_log("Baked shadowMesh with %d submeshes, %d vertex buffers, %d vertices", shadowMesh.submeshes.count, shadowMesh.vertexBuffers.count, shadowMesh.vertexCount)
+//                os_log("Baked shadowMesh with %d submeshes, %d vertex buffers, %d vertices", type: .debug, shadowMesh.submeshes.count, shadowMesh.vertexBuffers.count, shadowMesh.vertexCount)
             } catch {
-                os_log("error converting GLKMesh")
+                os_log("error converting GLKMesh", type: .error)
                 print("caught: \(error)")
                 exit(-1)
             }
         }
-        os_log("Loaded meshes: %d", meshes.count)
+        os_log("Loaded meshes: %d", type: .debug, meshes.count)
     }
 
     func setupBuffer() {
@@ -236,7 +236,7 @@ class Boxes {
 
 //        for submesh in mesh.submeshes {
 //            let buf = submesh.elementBuffer
-//            os_log("element count: %d, buffer offset: %d, buffer length: %d", submesh.elementCount, buf.offset, buf.length)
+//            os_log("element count: %d, buffer offset: %d, buffer length: %d", type: .debug, submesh.elementCount, buf.offset, buf.length)
 //        }
 
         glGenVertexArrays(3, &VAO[0])
@@ -328,7 +328,7 @@ class Boxes {
         glDrawBuffers(1, [GLenum(GL_COLOR_ATTACHMENT0)])
 
         if glCheckFramebufferStatus(GLenum(GL_FRAMEBUFFER)) != GL_FRAMEBUFFER_COMPLETE {
-            os_log("Frame buffer not complete!")
+            os_log("Frame buffer not complete!", type: .error)
             switch Int32(glCheckFramebufferStatus(GLenum(GL_FRAMEBUFFER))) {
             case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT: print("GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT")
             case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS: print("GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS")
@@ -342,7 +342,7 @@ class Boxes {
             }
             exit(-1)
         } else {
-            os_log("Complete!")
+            os_log("Complete!", type: .debug)
         }
 
         glBindTexture(GLenum(GL_TEXTURE_2D), 0)
@@ -541,7 +541,7 @@ class Boxes {
 //        object.selected = true
 //        selectedObject = object
 //        objects.append(object)
-//        os_log("Current objects: %d", objects.count)
+//        os_log("Current objects: %d", type: .debug, objects.count)
 //    }
 
     func addBox(translate: float3) {
@@ -553,7 +553,7 @@ class Boxes {
         object.selected = true
         selectedObject = object
         objects.append(object)
-        os_log("Current objects: %d", objects.count)
+        os_log("Current objects: %d", type: .debug, objects.count)
     }
 
     func rotate(by degCGFloat: CGFloat) {
