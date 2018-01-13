@@ -42,10 +42,23 @@ class ARViewController: ViewController {
     override func glkView(_ view: GLKView, drawIn rect: CGRect) {
         super.glkView(view, drawIn: rect)
 
+        glPushGroupMarkerEXT(0, "Render geometry")
+
+        var defaultFBO = GLint()
+        glGetIntegerv(GLenum(GL_FRAMEBUFFER_BINDING_OES), &defaultFBO)
+
+//        boxes.renderShadow()
+
+        glPushGroupMarkerEXT(0, "Render objects")
+
+        glBindFramebuffer(GLenum(GL_FRAMEBUFFER), GLuint(defaultFBO))
+
         glViewport(GLint(self.viewport.origin.x), GLint(self.viewport.origin.y), GLsizei(self.viewport.size.width), GLsizei(self.viewport.size.height))
         glDepthMask(GLboolean(GL_TRUE))
         glEnable(GLenum(GL_DEPTH_TEST))
         boxes.draw()
+        glPopGroupMarkerEXT()
+        glPopGroupMarkerEXT()
     }
 
     override func session(_ session: ARSession, didUpdate frame: ARFrame) {
@@ -123,7 +136,7 @@ extension ARViewController {
                 let transform = GLKMatrix4(result.worldTransform)
                 let anchor = ARAnchor(transform: result.worldTransform)
                 self.arSession.add(anchor: anchor)
-                boxes.addBox(transform: transform)
+                boxes.addBox(translate: result.worldTransform.translation)
             }
             os_log("Found %d planes", count)
         } else {
@@ -141,14 +154,14 @@ extension ARViewController {
 
 //                let anchor = ARAnchor(transform: transform)
 //                self.arSession.add(anchor: anchor)
-                boxes.addBox(transform: transform)
+                boxes.addBox(translate: featurePosition)
             } else {
                 // last resort
                 let unfilteredFeatureHitTestResults = hitTestWithFeatures(adjustedPoint)
                 if let result = unfilteredFeatureHitTestResults.first?.position {
                     os_log("Feature point unfiltered success!")
                     let transform = GLKMatrix4MakeTranslation(result.x, result.y, result.z)
-                    boxes.addBox(transform: transform)
+                    boxes.addBox(translate: result)
                 } else {
                     os_log("Feature point failed!")
                 }

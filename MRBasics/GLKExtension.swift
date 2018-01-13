@@ -24,6 +24,9 @@ extension GLKVector3 {
     init(_ x: GLfloat, _ y: GLfloat, _ z: GLfloat) {
         self = GLKVector3Make(x, y, z)
     }
+    init(_ v: float3) {
+        self = GLKVector3Make(v.x, v.y, v.z)
+    }
 }
 
 extension GLKVector4 {

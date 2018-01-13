@@ -63,10 +63,15 @@ class ViewController: GLKViewController, ARSessionDelegate {
     override func glkView(_ view: GLKView, drawIn rect: CGRect) {
         super.glkView(view, drawIn: rect)
 
+        glPushGroupMarkerEXT(0, "renderScreen")
+
         baseEffect.prepareToDraw()
 
         glClearColor(1.0, 1.0, 1.0, 1.0);
         glClear(GLenum(GL_COLOR_BUFFER_BIT) | GLenum(GL_DEPTH_BUFFER_BIT))
+
+        glEnable(GLenum(GL_BLEND))
+        glBlendFunc(GLenum(GL_SRC_ALPHA), GLenum(GL_ONE_MINUS_SRC_ALPHA))
 
         glDepthMask(GLboolean(GL_FALSE))
 
@@ -85,6 +90,8 @@ class ViewController: GLKViewController, ARSessionDelegate {
 
         glDrawElements(GLenum(GL_TRIANGLES), GLsizei(vertIndex.count), GLenum(GL_UNSIGNED_INT), nil)
         glDepthMask(GLboolean(GL_TRUE))
+
+        glPopGroupMarkerEXT()
     }
 
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
