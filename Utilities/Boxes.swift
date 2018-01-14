@@ -44,7 +44,7 @@ class ModelObject {
     var animated: Bool = false
     var lift: GLfloat = 0
     var oldLift: GLfloat = 0
-    let maxLift: GLfloat = 0.02
+    let maxLift: GLfloat = 0.05
 }
 
 class Boxes {
