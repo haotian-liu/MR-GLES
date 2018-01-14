@@ -13,17 +13,10 @@ float unpack(vec4 packedZValue) {
     return dot(packedZValue,unpackFactors);
 }
 
-float getShadowFactor(vec4 lightZ) {
-    vec4 packedZValue = texture(depthTexture, lightZ.st);
-    float unpackedZValue = unpack(packedZValue);
-    return float(unpackedZValue > lightZ.z);
-}
-
 void main() {
     vec4 shadowMapPosition = shadowCoord / shadowCoord.w;
     float depth = (shadowCoord.z / shadowCoord.w + 1.0) / 2.0;
     vec4 dist_pack = texture(depthTexture, shadowCoord.xy);
-    vec4 f = dist_pack;
-
-    color = vec4(vec3(f), 1.f - f);
+    bool isShadow = unpack(dist_pack) < depth;
+    color = isShadow ? vec4(0.3f) : vec4(0.f);
 }

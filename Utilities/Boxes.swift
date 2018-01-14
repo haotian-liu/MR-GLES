@@ -68,7 +68,7 @@ class Boxes {
 
     // shadow FBO
     private var FBO = GLuint()
-    private var RBO = GLuint()
+    private var RBO = Array<GLuint>(repeating: GLuint(), count: 2)
     private var depthTexture = GLuint()
 
     private var VAO = Array<GLuint>(repeating: GLuint(), count: 3)
@@ -297,7 +297,6 @@ class Boxes {
         glGenTextures(1, &depthTexture)
         glActiveTexture(GLenum(GL_TEXTURE2))
         glBindTexture(GLenum(GL_TEXTURE_2D), depthTexture)
-        glTexImage2D(GLenum(GL_TEXTURE_2D), 0, GL_RGBA, 1024, 1024, 0, GLenum(GL_RGBA), GLenum(GL_UNSIGNED_BYTE), nil)
 
 //        glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MAG_FILTER), GL_NEAREST)
 //        glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MIN_FILTER), GL_NEAREST)
@@ -310,18 +309,24 @@ class Boxes {
         glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_S), GL_CLAMP_TO_EDGE)
         glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_T), GL_CLAMP_TO_EDGE)
 
+        glTexImage2D(GLenum(GL_TEXTURE_2D), 0, GL_RGBA, 1024, 1024, 0, GLenum(GL_RGBA), GLenum(GL_UNSIGNED_BYTE), nil)
+
         glBindTexture(GLenum(GL_TEXTURE_2D), 0)
 
         // deal with shadow FBO and texture
         glGenFramebuffers(1, &FBO)
-        glGenRenderbuffers(1, &RBO)
+        glGenRenderbuffers(2, &RBO[0])
 
-        glBindRenderbuffer(GLenum(GL_RENDERBUFFER), RBO)
+        glBindRenderbuffer(GLenum(GL_RENDERBUFFER), RBO[0])
+        glRenderbufferStorage(GLenum(GL_RENDERBUFFER), GLenum(GL_RGBA8), 1024, 1024)
+        glBindRenderbuffer(GLenum(GL_RENDERBUFFER), RBO[1])
         glRenderbufferStorage(GLenum(GL_RENDERBUFFER), GLenum(GL_DEPTH_COMPONENT16), 1024, 1024)
 
         glBindFramebuffer(GLenum(GL_FRAMEBUFFER), FBO)
         glBindTexture(GLenum(GL_TEXTURE_2D), depthTexture)
-        glFramebufferRenderbuffer(GLenum(GL_FRAMEBUFFER), GLenum(GL_DEPTH_ATTACHMENT), GLenum(GL_RENDERBUFFER), RBO)
+        glFramebufferRenderbuffer(GLenum(GL_FRAMEBUFFER), GLenum(GL_COLOR_ATTACHMENT0), GLenum(GL_RENDERBUFFER), RBO[0])
+        glFramebufferRenderbuffer(GLenum(GL_FRAMEBUFFER), GLenum(GL_DEPTH_ATTACHMENT), GLenum(GL_RENDERBUFFER), RBO[1])
+
         glFramebufferTexture2D(GLenum(GL_FRAMEBUFFER), GLenum(GL_COLOR_ATTACHMENT0), GLenum(GL_TEXTURE_2D), depthTexture, 0)
 
 //        glDrawBuffers(1, [GLenum(GL_NONE)])
