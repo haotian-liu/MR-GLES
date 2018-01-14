@@ -64,7 +64,7 @@ class Boxes {
 
     private var meshes: [GLKMesh] = []
     private var objects: [ModelObject] = []
-    private(set) var selectedObject: ModelObject? = nil
+    public var selectedObject: ModelObject? = nil
 
     // shadow FBO
     private var FBO = GLuint()
@@ -605,5 +605,11 @@ extension Boxes {
         matrix.m.14 = b_
 
         return matrix
+    }
+
+    func projectedObject(test object: ModelObject) -> GLKVector2 {
+        var viewport = [Int32(self.viewport.origin.x), Int32(self.viewport.origin.y), Int32(self.viewport.size.width), Int32(self.viewport.size.height)]
+        let project = GLKMathProject(object.translate, self.viewMatrix, self.projectionMatrix, &viewport[0])
+        return GLKVector2Make(project.x, project.y)
     }
 }

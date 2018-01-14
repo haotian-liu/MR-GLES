@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		7519C3F51F7F3ADB003EE503 /* MyGLBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7519C3F41F7F3ADB003EE503 /* MyGLBase.swift */; };
 		754916CB200A3FC80082D16E /* ThresholdPanGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 754916CA200A3FC80082D16E /* ThresholdPanGestureRecognizer.swift */; };
+		754916CD200AFC510082D16E /* ARViewControllerFeatureTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 754916CC200AFC510082D16E /* ARViewControllerFeatureTest.swift */; };
 		754970C71FFF65D900F4F7C8 /* Boxes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 754970C61FFF65D900F4F7C8 /* Boxes.swift */; };
 		754970C9200083AC00F4F7C8 /* ModelIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 754970C8200083AC00F4F7C8 /* ModelIO.framework */; };
 		754970CB200083C300F4F7C8 /* Model in Resources */ = {isa = PBXBuildFile; fileRef = 754970CA200083C300F4F7C8 /* Model */; };
@@ -47,6 +48,7 @@
 /* Begin PBXFileReference section */
 		7519C3F41F7F3ADB003EE503 /* MyGLBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyGLBase.swift; sourceTree = "<group>"; };
 		754916CA200A3FC80082D16E /* ThresholdPanGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThresholdPanGestureRecognizer.swift; sourceTree = "<group>"; };
+		754916CC200AFC510082D16E /* ARViewControllerFeatureTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewControllerFeatureTest.swift; sourceTree = "<group>"; };
 		754970C61FFF65D900F4F7C8 /* Boxes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Boxes.swift; sourceTree = "<group>"; };
 		754970C8200083AC00F4F7C8 /* ModelIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ModelIO.framework; path = System/Library/Frameworks/ModelIO.framework; sourceTree = SDKROOT; };
 		754970CA200083C300F4F7C8 /* Model */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Model; path = Resources/Model; sourceTree = "<group>"; };
@@ -137,6 +139,7 @@
 				754E1DF71F7DEA7200265633 /* LaunchScreen.storyboard */,
 				754E1DFA1F7DEA7200265633 /* Info.plist */,
 				7578533D1FFA3A40005ED22A /* ARViewController.swift */,
+				754916CC200AFC510082D16E /* ARViewControllerFeatureTest.swift */,
 			);
 			path = MRBasics;
 			sourceTree = "<group>";
@@ -321,6 +324,7 @@
 				7519C3F51F7F3ADB003EE503 /* MyGLBase.swift in Sources */,
 				757853421FFA5CDA005ED22A /* TextManager.swift in Sources */,
 				754970C71FFF65D900F4F7C8 /* Boxes.swift in Sources */,
+				754916CD200AFC510082D16E /* ARViewControllerFeatureTest.swift in Sources */,
 				754E1DF11F7DEA7200265633 /* ViewController.swift in Sources */,
 				754E1DEF1F7DEA7200265633 /* AppDelegate.swift in Sources */,
 				7578533E1FFA3A40005ED22A /* ARViewController.swift in Sources */,

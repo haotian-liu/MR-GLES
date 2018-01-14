@@ -211,19 +211,39 @@ extension ViewController {
 
 extension ViewController: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        if (gestureRecognizer, otherGestureRecognizer) is (UIRotationGestureRecognizer, UIPinchGestureRecognizer) || (gestureRecognizer, otherGestureRecognizer) is (UIPinchGestureRecognizer, UIRotationGestureRecognizer) {
-            return true
-        }
-        if (gestureRecognizer, otherGestureRecognizer) is (UITapGestureRecognizer, ThresholdPanGestureRecognizer) || (gestureRecognizer, otherGestureRecognizer) is (ThresholdPanGestureRecognizer, UITapGestureRecognizer) {
-            return true
-        }
-        return false
+//        if (gestureRecognizer, otherGestureRecognizer) is (UIRotationGestureRecognizer, UIPinchGestureRecognizer) || (gestureRecognizer, otherGestureRecognizer) is (UIPinchGestureRecognizer, UIRotationGestureRecognizer) {
+//            return true
+//        }
+//        if (gestureRecognizer, otherGestureRecognizer) is (UITapGestureRecognizer, ThresholdPanGestureRecognizer) || (gestureRecognizer, otherGestureRecognizer) is (ThresholdPanGestureRecognizer, UITapGestureRecognizer) {
+//            return true
+//        }
+        return true
     }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        if gestureRecognizer is ThresholdPanGestureRecognizer && otherGestureRecognizer is UITapGestureRecognizer {
+        // Rotation and pinch gesture have top priority
+        if (otherGestureRecognizer is ThresholdPanGestureRecognizer) && (gestureRecognizer is UIRotationGestureRecognizer || gestureRecognizer is UIPinchGestureRecognizer) {
             return true
         }
+        if gestureRecognizer is UITapGestureRecognizer {
+            return true
+        }
+//        if gestureRecognizer is ThresholdPanGestureRecognizer && otherGestureRecognizer is UITapGestureRecognizer {
+//            return true
+//        }
         return false
+    }
+
+    private func gestureRecognizerToString(_ gesture: UIGestureRecognizer) -> String {
+        if gesture is UITapGestureRecognizer {
+            return "UITapGestureRecognizer"
+        } else if gesture is UIRotationGestureRecognizer {
+            return "UIRotationGestureRecognizer"
+        } else if gesture is UIPinchGestureRecognizer {
+            return "UIPinchGestureRecognizer"
+        } else if gesture is ThresholdPanGestureRecognizer {
+            return "ThresholdPanGestureRecognizer"
+        }
+        return "OtherGestureRecognizer"
     }
 }
