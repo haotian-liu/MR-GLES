@@ -44,7 +44,7 @@ class ModelObject {
     var animated: Bool = false
     var lift: GLfloat = 0
     var oldLift: GLfloat = 0
-    let maxLift: GLfloat = 0.1
+    let maxLift: GLfloat = 0.02
 }
 
 class Boxes {
@@ -306,7 +306,7 @@ class Boxes {
         glGetIntegerv(GLenum(GL_FRAMEBUFFER_BINDING_OES), &defaultFBO)
 
         glGenTextures(1, &depthTexture)
-        glActiveTexture(GLenum(GL_TEXTURE2))
+        glActiveTexture(GLenum(GL_TEXTURE6))
         glBindTexture(GLenum(GL_TEXTURE_2D), depthTexture)
 
 //        glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MAG_FILTER), GL_NEAREST)
@@ -364,7 +364,7 @@ class Boxes {
 
         //////////////////////////////////
         glGenTextures(1, &objectMarkTexture)
-        glActiveTexture(GLenum(GL_TEXTURE2))
+        glActiveTexture(GLenum(GL_TEXTURE7))
         glBindTexture(GLenum(GL_TEXTURE_2D), objectMarkTexture)
 
         glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MIN_FILTER), GL_LINEAR)
@@ -514,7 +514,7 @@ class Boxes {
         shadowBufferShader.Activate()
         let mesh = meshes[0], submeshes = mesh.submeshes
 
-        var in_MVP = getMVPMatrixForShadow(scale: 0.001)
+        var in_MVP = getMVPMatrixForShadow(scale: 0.005)
 
         withUnsafePointer(to: &in_MVP) {
             $0.withMemoryRebound(to: GLfloat.self, capacity: 16) {
@@ -604,7 +604,7 @@ class Boxes {
 
             glUniform1i(shader.getUniformLocation("mapKaSampler"), 0)
             glUniform1i(shader.getUniformLocation("mapBumpSampler"), 1)
-            glUniform1i(shader.getUniformLocation("mapReflSampler"), 3)
+            glUniform1i(shader.getUniformLocation("mapReflSampler"), 2)
 
             glUniform1i(shader.getUniformLocation("selected"), object.selected ? 1 : 0)
 
@@ -618,14 +618,14 @@ class Boxes {
                     glBindTexture(GLenum(GL_TEXTURE_2D), textures[0])
                     glActiveTexture(GLenum(GL_TEXTURE1))
                     glBindTexture(GLenum(GL_TEXTURE_2D), textures[1])
-                    glActiveTexture(GLenum(GL_TEXTURE3))
+                    glActiveTexture(GLenum(GL_TEXTURE2))
                     glBindTexture(GLenum(GL_TEXTURE_2D), textures[2])
                 case 1:
                     glActiveTexture(GLenum(GL_TEXTURE0))
                     glBindTexture(GLenum(GL_TEXTURE_2D), textures[3])
                     glActiveTexture(GLenum(GL_TEXTURE1))
                     glBindTexture(GLenum(GL_TEXTURE_2D), textures[4])
-                    glActiveTexture(GLenum(GL_TEXTURE3))
+                    glActiveTexture(GLenum(GL_TEXTURE2))
                     glBindTexture(GLenum(GL_TEXTURE_2D), textures[5])
                 default:
                     break
@@ -644,7 +644,7 @@ class Boxes {
         shadowShader.Activate()
         // draw shadow plane
 
-        glActiveTexture(GLenum(GL_TEXTURE2))
+        glActiveTexture(GLenum(GL_TEXTURE6))
         glBindTexture(GLenum(GL_TEXTURE_2D), depthTexture)
 //        glGenerateMipmap(GLenum(GL_TEXTURE_2D))
 
@@ -676,7 +676,7 @@ class Boxes {
             }
 
             glUniform1i(shadowShader.getUniformLocation("hasTexture"), 1)
-            glUniform1i(shadowShader.getUniformLocation("depthTexture"), 2)
+            glUniform1i(shadowShader.getUniformLocation("depthTexture"), 6)
 
             glBindBuffer(GLenum(GL_ARRAY_BUFFER), shadowVBO)
             glDrawArrays(GLenum(GL_TRIANGLE_FAN), 0, GLsizei(vertices.count))
