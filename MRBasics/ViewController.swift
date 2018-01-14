@@ -78,13 +78,13 @@ class ViewController: GLKViewController, ARSessionDelegate {
         shader.Activate()
         glBindVertexArray(VAO)
 
-        glActiveTexture(GLenum(GL_TEXTURE0))
+        glActiveTexture(GLenum(GL_TEXTURE8))
         glBindTexture(GLenum(GL_TEXTURE_2D), self.yTexture)
-        glUniform1i(glGetUniformLocation(shader.programId, "yTexture"), 0)
+        glUniform1i(glGetUniformLocation(shader.programId, "yTexture"), 8)
 
-        glActiveTexture(GLenum(GL_TEXTURE1))
+        glActiveTexture(GLenum(GL_TEXTURE9))
         glBindTexture(GLenum(GL_TEXTURE_2D), self.uvTexture)
-        glUniform1i(glGetUniformLocation(shader.programId, "uvTexture"), 1)
+        glUniform1i(glGetUniformLocation(shader.programId, "uvTexture"), 9)
 
         glDrawElements(GLenum(GL_TRIANGLES), GLsizei(vertIndex.count), GLenum(GL_UNSIGNED_INT), nil)
         glDepthMask(GLboolean(GL_TRUE))
