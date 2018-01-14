@@ -73,9 +73,15 @@ class Boxes {
 
     private var VAO = Array<GLuint>(repeating: GLuint(), count: 3)
     private var VBO = Array<GLuint>(repeating: GLuint(), count: 3)
+
+    private var objectMarkFBO = GLuint()
+    private var objectMarkRBO = Array<GLuint>(repeating: GLuint(), count: 2)
+    private var objectMarkTexture = GLuint()
+
     private var shader: BaseEffect!
     private var shadowBufferShader: BaseEffect!
     private var shadowShader: BaseEffect!
+    private var objectMarkShader: BaseEffect!
     private var textures = Array<GLuint>(repeating: GLuint(), count: 2)
     private var hasTextures = [Bool]()
 
@@ -244,8 +250,6 @@ class Boxes {
         // vertex position
         glBindBuffer(GLenum(GL_ARRAY_BUFFER), mesh.vertexBuffers[0].glBufferName)
         let locVertPos = GLuint(glGetAttribLocation(shader.programId, "vertPos"))
-//        print("loc vao0\(locVertPos)")
-//        let locVertPos: GLuint = 0 // fixed layout
         glEnableVertexAttribArray(locVertPos)
         glVertexAttribPointer(locVertPos, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<GLKVector3>.size), nil)
 
@@ -350,6 +354,60 @@ class Boxes {
             os_log("Complete!", type: .debug)
         }
 
+
+        //////////////////////////////////
+        glGenTextures(1, &objectMarkTexture)
+        glActiveTexture(GLenum(GL_TEXTURE2))
+        glBindTexture(GLenum(GL_TEXTURE_2D), objectMarkTexture)
+
+        glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MIN_FILTER), GL_LINEAR)
+        glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MAG_FILTER), GL_LINEAR)
+        glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_S), GL_CLAMP_TO_EDGE)
+        glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_T), GL_CLAMP_TO_EDGE)
+
+        glTexImage2D(GLenum(GL_TEXTURE_2D), 0, GL_RGBA, 750, 1334, 0, GLenum(GL_RGBA), GLenum(GL_UNSIGNED_BYTE), nil)
+
+        glBindTexture(GLenum(GL_TEXTURE_2D), 0)
+
+        // deal with shadow FBO and texture
+        glGenFramebuffers(1, &objectMarkFBO)
+        glGenRenderbuffers(2, &objectMarkRBO[0])
+
+        glBindRenderbuffer(GLenum(GL_RENDERBUFFER), objectMarkRBO[0])
+        glRenderbufferStorage(GLenum(GL_RENDERBUFFER), GLenum(GL_RGBA8), 750, 1334)
+        glBindRenderbuffer(GLenum(GL_RENDERBUFFER), objectMarkRBO[1])
+        glRenderbufferStorage(GLenum(GL_RENDERBUFFER), GLenum(GL_DEPTH_COMPONENT16), 750, 1334)
+
+        glBindFramebuffer(GLenum(GL_FRAMEBUFFER), objectMarkFBO)
+        glBindTexture(GLenum(GL_TEXTURE_2D), objectMarkTexture)
+        glFramebufferRenderbuffer(GLenum(GL_FRAMEBUFFER), GLenum(GL_COLOR_ATTACHMENT0), GLenum(GL_RENDERBUFFER), objectMarkRBO[0])
+        glFramebufferRenderbuffer(GLenum(GL_FRAMEBUFFER), GLenum(GL_DEPTH_ATTACHMENT), GLenum(GL_RENDERBUFFER), objectMarkRBO[1])
+
+        glFramebufferTexture2D(GLenum(GL_FRAMEBUFFER), GLenum(GL_COLOR_ATTACHMENT0), GLenum(GL_TEXTURE_2D), objectMarkTexture, 0)
+
+        //        glDrawBuffers(1, [GLenum(GL_NONE)])
+        glDrawBuffers(1, [GLenum(GL_COLOR_ATTACHMENT0)])
+
+        if glCheckFramebufferStatus(GLenum(GL_FRAMEBUFFER)) != GL_FRAMEBUFFER_COMPLETE {
+            os_log("Frame buffer not complete!", type: .error)
+            switch Int32(glCheckFramebufferStatus(GLenum(GL_FRAMEBUFFER))) {
+            case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT: print("GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT")
+            case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS: print("GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS")
+            case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_OES: print("GL_FRAMEBUFFER_INCOMPLETE_FORMATS_OES")
+            case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_OES: print("GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_OES")
+            case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_OES: print("GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_OES")
+            case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_APPLE: print("GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_APPLE")
+            case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT: print("GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT")
+            case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_OES: print("GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_OES")
+            default: print("Unknown")
+            }
+            exit(-1)
+        } else {
+            os_log("Complete!", type: .debug)
+        }
+
+        ////////////////////////////////
+
         glBindTexture(GLenum(GL_TEXTURE_2D), 0)
 
         renderShadow()
@@ -361,6 +419,7 @@ class Boxes {
         self.shader = BaseEffect(vertexShader: "Shader/sofa_phong.vs", fragmentShader: "Shader/sofa_phong.fs")
         self.shadowShader = BaseEffect(vertexShader: "Shader/shadow.vs", fragmentShader: "Shader/shadow.fs")
         self.shadowBufferShader = BaseEffect(vertexShader: "Shader/shadow_buf.vs", fragmentShader: "Shader/shadow_buf.fs")
+        self.objectMarkShader = BaseEffect(vertexShader: "Shader/object_buf.vs", fragmentShader: "Shader/object_buf.fs")
     }
 
     func updateMatrix(type: MatrixType, mat: GLKMatrix4) {
@@ -386,14 +445,55 @@ class Boxes {
         return in_MVP
     }
 
+    private func renderObjectMark() {
+        glPushGroupMarkerEXT(0, "objectMark")
+
+        glBindFramebuffer(GLenum(GL_FRAMEBUFFER), objectMarkFBO)
+        glViewport(0, 0, 750, 1334)
+
+        glClearColor(1.0, 1.0, 1.0, 1.0);
+        glClear(GLenum(GL_COLOR_BUFFER_BIT) | GLenum(GL_DEPTH_BUFFER_BIT))
+
+        glEnable(GLenum(GL_DEPTH_TEST))
+        glDepthMask(GLboolean(GL_TRUE))
+
+        glEnable(GLenum(GL_CULL_FACE))
+        glCullFace(GLenum(GL_BACK))
+
+        // start draw
+        objectMarkShader.Activate()
+        let mesh = meshes[0], submeshes = mesh.submeshes
+
+        glBindVertexArray(VAO[0])
+        for object in objects {
+            let scaleFactor: Float = 0.001
+            let model = object.transform * GLKMatrix4MakeScale(scaleFactor, scaleFactor, scaleFactor)
+            let view = self.viewMatrix
+            let proj = moveNearClipClose(projection: self.projectionMatrix)
+            var in_MVP = proj * view * model
+
+            withUnsafePointer(to: &in_MVP) {
+                $0.withMemoryRebound(to: GLfloat.self, capacity: 16) {
+                    glUniformMatrix4fv(objectMarkShader.getUniformLocation("MVPMatrix"), 1, GLboolean(GL_FALSE), $0)
+                }
+            }
+
+            for (index, submesh) in submeshes.enumerated() {
+                glUniform1f(objectMarkShader.getUniformLocation("id"), GLfloat(index) / 255.0)
+                glDrawElements(GLenum(GL_TRIANGLES), submesh.elementCount, GLenum(GL_UNSIGNED_INT), UnsafeRawPointer(bitPattern: submesh.elementBuffer.offset))
+            }
+        }
+        glDisable(GLenum(GL_CULL_FACE))
+
+        glPopGroupMarkerEXT()
+    }
+
     private func renderShadow() {
         glPushGroupMarkerEXT(0, "shadow")
 
         glBindFramebuffer(GLenum(GL_FRAMEBUFFER), FBO)
         glViewport(0, 0, 1024, 1024)
 
-//        glClearDepthf(1.0)
-//        glClear(GLenum(GL_DEPTH_BUFFER_BIT))
         glClearColor(1.0, 1.0, 1.0, 1.0);
         glClear(GLenum(GL_COLOR_BUFFER_BIT) | GLenum(GL_DEPTH_BUFFER_BIT))
 
@@ -494,6 +594,7 @@ class Boxes {
 
                 glDrawElements(GLenum(GL_TRIANGLES), submesh.elementCount, GLenum(GL_UNSIGNED_INT), UnsafeRawPointer(bitPattern: submesh.elementBuffer.offset))
             }
+//            glInsertEventMarkerEXT(0, "com.apple.GPUTools.event.debug-frame")
         }
         glDisable(GLenum(GL_CULL_FACE))
 
@@ -532,7 +633,6 @@ class Boxes {
             glBindBuffer(GLenum(GL_ARRAY_BUFFER), shadowVBO)
             glDrawArrays(GLenum(GL_TRIANGLE_FAN), 0, GLsizei(vertices.count))
 
-//            glInsertEventMarkerEXT(0, "com.apple.GPUTools.event.debug-frame")
         }
         glPopGroupMarkerEXT()
     }
@@ -571,6 +671,29 @@ class Boxes {
         guard let object = selectedObject else { return }
         let deg = GLfloat(degCGFloat)
         object.scaleBias *= deg
+    }
+
+    func getPixelMarker(_ point: CGPoint) -> GLubyte {
+        var defaultFBO = GLint()
+        glGetIntegerv(GLenum(GL_FRAMEBUFFER_BINDING_OES), &defaultFBO)
+
+        self.renderObjectMark()
+        glBindFramebuffer(GLenum(GL_FRAMEBUFFER), objectMarkFBO)
+
+        let framebuffer = CGRect(x: 0, y: 0, width: 750, height: 1334)
+        let imageByteSize = Int(framebuffer.size.width * framebuffer.size.height * 4)
+        let data = UnsafeMutablePointer<UInt8>.allocate(capacity: imageByteSize)
+        glReadPixels(0, 0, GLsizei(framebuffer.size.width), GLsizei(framebuffer.size.height), GLenum(GL_RGBA), GLenum(GL_UNSIGNED_BYTE), data)
+        glBindFramebuffer(GLenum(GL_FRAMEBUFFER), GLuint(defaultFBO))
+
+        let x = Int(point.x)
+        let y = Int(point.y)
+        let index = Int(framebuffer.size.width) * y + x
+
+        let color = UInt8(data[4 * index])
+
+        data.deallocate(capacity: imageByteSize)
+        return color
     }
 }
 

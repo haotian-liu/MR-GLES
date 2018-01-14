@@ -59,7 +59,7 @@ class ARViewController: ViewController {
         var defaultFBO = GLint()
         glGetIntegerv(GLenum(GL_FRAMEBUFFER_BINDING_OES), &defaultFBO)
 
-//        boxes.renderShadow()
+//        boxes.renderObjectMark()
 
         glPushGroupMarkerEXT(0, "Render objects")
 
@@ -157,6 +157,11 @@ extension ARViewController {
         //        print("Adjusted point: \(adjustedPoint.x), \(adjustedPoint.y)")
         //        os_log("tap point relative (%f, %f)\n", type: .debug, relativePoint.x, relativePoint.y)
         //        os_log("Tap gesture recognized", type: .debug)
+
+        if boxes.selectedObject != nil {
+            let color = boxes.getPixelMarker(adjustedPoint)
+            return
+        }
 
         let results = anchorHitTest(relativePoint, adjustedPoint)
 

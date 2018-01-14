@@ -16,7 +16,6 @@ uniform float Ns;
 in vec3 worldCoord;
 in vec3 eyeCoord;
 in vec2 texCoord;
-
 in vec3 normal;
 //in vec3 tangent;
 //in vec3 bitangent;
@@ -58,5 +57,4 @@ void main() {
     vec3 combined = vec3(KaColor + KdColor * diffuse + KsColor * specular);
 
     FragColor = vec4(selected ? vec3(combined.x, combined.yz + vec2(0.3f)) : combined, 1.f);
-//    FragColor = vec4(vec3(N), 1.f);
 }
