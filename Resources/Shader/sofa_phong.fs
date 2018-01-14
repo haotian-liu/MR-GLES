@@ -6,6 +6,7 @@ uniform bool selected;
 //uniform float lightDistance;
 uniform sampler2D mapKaSampler;
 uniform sampler2D mapBumpSampler;
+uniform sampler2D mapReflSampler;
 uniform bool hasTexture;
 
 uniform vec3 Ka;
@@ -17,10 +18,31 @@ in vec3 worldCoord;
 in vec3 eyeCoord;
 in vec2 texCoord;
 in vec3 normal;
-//in vec3 tangent;
-//in vec3 bitangent;
+in vec3 tangent;
+in vec3 bitangent;
 
 out vec4 FragColor;
+
+vec4 calculateNormal(vec2 tex_coord) {
+    const vec2 size = vec2(2.0,0.0);
+    const ivec3 off = ivec3(-1,0,1);
+
+    vec4 wave = texture(mapBumpSampler, tex_coord);
+    float s11 = wave.x;
+    float s01 = textureOffset(mapBumpSampler, tex_coord, off.xy).x;
+    float s21 = textureOffset(mapBumpSampler, tex_coord, off.zy).x;
+    float s10 = textureOffset(mapBumpSampler, tex_coord, off.yx).x;
+    float s12 = textureOffset(mapBumpSampler, tex_coord, off.yz).x;
+    vec3 va = normalize(vec3(size.xy,s21-s01));
+    vec3 vb = normalize(vec3(size.yx,s12-s10));
+    vec4 bump = vec4( cross(va,vb), s11 );
+
+    return bump;
+}
+
+vec3 normalMap(vec3 normal) {
+    return (normal + vec3(1.f)) / 2.0;
+}
 
 void main() {
     //    float Shininess = Ns;
@@ -33,17 +55,20 @@ void main() {
     //    vec3 KsColor = Ks;
     //    vec3 KaColor = vec3(0.f);
 //    vec3 bump = texture(mapBumpSampler, texCoord).xyz * 2.0 - 1.0;
-    vec3 KaColor = hasTexture ? texture(mapKaSampler, texCoord).xyz : vec3(0.f, 0.f, 0.f);
-    vec3 KdColor = vec3(0.5f);
-    vec3 KsColor = vec3(0.8f);
+//    float height = texture(mapBumpSampler, texCoord).x;
+    vec3 KdColor = hasTexture ? texture(mapKaSampler, texCoord).xyz : vec3(0.5f);
+    vec3 KaColor = vec3(.1f) * KdColor;
+    vec3 KsColor = hasTexture ? texture(mapReflSampler, texCoord).xyz : vec3(0.5f);
     vec3 lightDirection = vec3(1.f);
     float lightDistance = 1.2;
     float Shininess = 10.f;
 
     //    vec3 N = normal + bump;
-//    mat3 TBN = mat3(tangent, bitangent, normal);
-//    vec3 N = TBN * bump;
-    vec3 N = normal;
+    mat3 TBN = mat3(tangent, bitangent, normal);
+    vec3 N;
+//    N = TBN * bump;
+//    N = normal;
+    N = TBN * calculateNormal(texCoord).xyz;
     vec3 L = normalize(lightDirection * lightDistance - worldCoord);
     vec3 R = reflect(-L, N);
     vec3 E = normalize(eyeCoord);

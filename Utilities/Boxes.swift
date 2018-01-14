@@ -48,33 +48,6 @@ class ModelObject {
 }
 
 class Boxes {
-//    private let vertices = [
-//        GLKVector3(-1.0,  1.0, -1.0),
-//        GLKVector3(-1.0,  1.0,  1.0),
-//        GLKVector3(-1.0, -1.0,  1.0),
-//        GLKVector3(-1.0, -1.0, -1.0),
-//        GLKVector3( 1.0,  1.0, -1.0),
-//        GLKVector3( 1.0,  1.0,  1.0),
-//        GLKVector3( 1.0, -1.0,  1.0),
-//        GLKVector3( 1.0, -1.0, -1.0),
-//    ]
-//
-//    private let faces: [GLuint] = [
-//        0, 1, 2, 0, 2, 3,
-//        0, 3, 7, 0, 7, 4,
-//        0, 1, 5, 0, 5, 4,
-//        1, 2, 6, 1, 6, 5,
-//        2, 6, 7, 2, 7, 3,
-//        4, 5, 6, 4, 6, 7,
-//    ]
-
-//    private let vertices = [
-//        GLKVector3(-1.0, 0.0, -1.0),
-//        GLKVector3(-1.0, 0.0,  1.0),
-//        GLKVector3( 1.0, 0.0,  1.0),
-//        GLKVector3( 1.0, 0.0, -1.0),
-//    ]
-
     private var vertices = [GLKVector3]()
 
     private var shadowVBO = GLuint()
@@ -99,8 +72,8 @@ class Boxes {
     private var shadowBufferShader: BaseEffect!
     private var shadowShader: BaseEffect!
     private var objectMarkShader: BaseEffect!
-    private var textures = Array<GLuint>(repeating: GLuint(), count: 2)
-    private var hasTextures = [Bool]()
+    private var textures = Array<GLuint>(repeating: GLuint(), count: 6)
+    private var textureIDs = [GLint]()
 
     private var viewMatrix = GLKMatrix4Identity, projectionMatrix = GLKMatrix4Identity
 
@@ -147,13 +120,13 @@ class Boxes {
 
         attr = vertexDescriptor.attributes[2] as! MDLVertexAttribute
         attr.name = MDLVertexAttributeTextureCoordinate
-        attr.format = .float3
+        attr.format = .float2
         attr.offset = 0
         attr.bufferIndex = 2
 
         (vertexDescriptor.layouts[0] as! MDLVertexBufferLayout).stride = 12
         (vertexDescriptor.layouts[1] as! MDLVertexBufferLayout).stride = 12
-        (vertexDescriptor.layouts[2] as! MDLVertexBufferLayout).stride = 12
+        (vertexDescriptor.layouts[2] as! MDLVertexBufferLayout).stride = 8
 
         let asset = MDLAsset(url: url, vertexDescriptor: vertexDescriptor, bufferAllocator: GLKMeshBufferAllocator())
         for index in 0..<asset.count {
@@ -162,9 +135,16 @@ class Boxes {
                 exit(-1)
             }
             for case let submesh as MDLSubmesh in object.submeshes! {
-                hasTextures.append(submesh.material!.name == "VRayMtl1SG")
+                switch submesh.material!.name {
+                case "cloth":
+                    textureIDs.append(0)
+                case "woods":
+                    textureIDs.append(1)
+                default:
+                    textureIDs.append(-1)
+                }
             }
-//            object.addTangentBasis(forTextureCoordinateAttributeNamed: MDLVertexAttributeTextureCoordinate, tangentAttributeNamed: MDLVertexAttributeTangent, bitangentAttributeNamed: MDLVertexAttributeBitangent)
+            object.addTangentBasis(forTextureCoordinateAttributeNamed: MDLVertexAttributeTextureCoordinate, tangentAttributeNamed: MDLVertexAttributeTangent, bitangentAttributeNamed: MDLVertexAttributeBitangent)
             os_log("Loaded MDLMesh with %d submeshes, %d vertex buffers, %d vertices", type: .debug, object.submeshes!.count, object.vertexBuffers.count, object.vertexCount)
 //            os_log("Loaded MDLMesh vertex descriptor attributes debug: %s %d %d", type: .debug, (object.vertexDescriptor.attributes[0] as! MDLVertexAttribute).name, (object.vertexDescriptor.attributes[0] as! MDLVertexAttribute).offset, (object.vertexDescriptor.attributes[0] as! MDLVertexAttribute).bufferIndex)
             do {
@@ -256,12 +236,16 @@ class Boxes {
         let mesh = meshes.first!
         let submesh = mesh.submeshes.first!
 
-        glGenTextures(2, &textures[0])
+        glGenTextures(6, &textures[0])
 
 //        load(texture: textures[0], from: "Model/basketball/map_Ka.png")
 //        load(texture: textures[1], from: "Model/basketball/map_bump.png")
-        load(texture: textures[0], from: "Model/sofa/41515f_cloth_dif.jpg")
-//        load(texture: textures[1], from: "Model/sofa/41515f_cloth_dif.jpg")
+        load(texture: textures[0], from: "Model/sofa/diff.jpg")
+        load(texture: textures[1], from: "Model/sofa/bump.jpg")
+        load(texture: textures[2], from: "Model/sofa/refl.jpg")
+        load(texture: textures[3], from: "Model/sofa/wood_d.jpg")
+        load(texture: textures[4], from: "Model/sofa/wood_b.jpg")
+        load(texture: textures[5], from: "Model/sofa/wood_r.jpg")
 
 //        for submesh in mesh.submeshes {
 //            let buf = submesh.elementBuffer
@@ -286,19 +270,19 @@ class Boxes {
         glBindBuffer(GLenum(GL_ARRAY_BUFFER), mesh.vertexBuffers[2].glBufferName)
         let locVertTexture = GLuint(glGetAttribLocation(shader.programId, "vertUV"))
         glEnableVertexAttribArray(locVertTexture)
-        glVertexAttribPointer(locVertTexture, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<GLKVector3>.size), nil)
+        glVertexAttribPointer(locVertTexture, 2, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<GLKVector2>.size), nil)
 
-//        // vertex tangent
-//        glBindBuffer(GLenum(GL_ARRAY_BUFFER), mesh.vertexBuffers[3].glBufferName)
-//        let locVertTangent = GLuint(glGetAttribLocation(shader.programId, "vertTangent"))
-//        glEnableVertexAttribArray(locVertTangent)
-//        glVertexAttribPointer(locVertTangent, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<GLKVector3>.size), nil)
-//
-//        // vertex bitangent
-//        glBindBuffer(GLenum(GL_ARRAY_BUFFER), mesh.vertexBuffers[4].glBufferName)
-//        let locVertBitangent = GLuint(glGetAttribLocation(shader.programId, "vertBitangent"))
-//        glEnableVertexAttribArray(locVertBitangent)
-//        glVertexAttribPointer(locVertBitangent, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<GLKVector3>.size), nil)
+        // vertex tangent
+        glBindBuffer(GLenum(GL_ARRAY_BUFFER), mesh.vertexBuffers[3].glBufferName)
+        let locVertTangent = GLuint(glGetAttribLocation(shader.programId, "vertTangent"))
+        glEnableVertexAttribArray(locVertTangent)
+        glVertexAttribPointer(locVertTangent, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<GLKVector3>.size), nil)
+
+        // vertex bitangent
+        glBindBuffer(GLenum(GL_ARRAY_BUFFER), mesh.vertexBuffers[4].glBufferName)
+        let locVertBitangent = GLuint(glGetAttribLocation(shader.programId, "vertBitangent"))
+        glEnableVertexAttribArray(locVertBitangent)
+        glVertexAttribPointer(locVertBitangent, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<GLKVector3>.size), nil)
 
         // vertex index
         glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), submesh.elementBuffer.glBufferName)
@@ -489,7 +473,7 @@ class Boxes {
 
         glBindVertexArray(VAO[0])
         for (index, object) in objects.enumerated() {
-            let scaleFactor: Float = 0.001
+            let scaleFactor: Float = 0.005
             let model = object.transform * GLKMatrix4MakeScale(scaleFactor, scaleFactor, scaleFactor)
             let view = self.viewMatrix
             let proj = moveNearClipClose(projection: self.projectionMatrix)
@@ -561,7 +545,7 @@ class Boxes {
 //            sum + e.elementCount
 //        })
         for object in objects {
-            let scaleFactor: Float = 0.001
+            let scaleFactor: Float = 0.005
 //            let transform = object.initialTransform
 //            let modelMatrix = transform * GLKMatrix4MakeScale(scaleFactor, scaleFactor, scaleFactor)
 //            let viewMatrix = GLKMatrix4MakeLookAt(3, 0, 0, 0, 0, 0, 0, 1, 0)
@@ -618,18 +602,34 @@ class Boxes {
                 }
             }
 
-            glActiveTexture(GLenum(GL_TEXTURE0))
-            glBindTexture(GLenum(GL_TEXTURE_2D), textures[0])
             glUniform1i(shader.getUniformLocation("mapKaSampler"), 0)
-//            glActiveTexture(GLenum(GL_TEXTURE1))
-//            glBindTexture(GLenum(GL_TEXTURE_2D), textures[1])
-//            glUniform1i(shader.getUniformLocation("mapBumpSampler"), 1)
+            glUniform1i(shader.getUniformLocation("mapBumpSampler"), 1)
+            glUniform1i(shader.getUniformLocation("mapReflSampler"), 3)
 
             glUniform1i(shader.getUniformLocation("selected"), object.selected ? 1 : 0)
 
-//            for (index, submesh) in submeshes.enumerated() {
-            for submesh in submeshes {
-                glUniform1i(shader.getUniformLocation("hasTexture"), 1)
+            for (index, submesh) in submeshes.enumerated() {
+                let textureID = textureIDs[index]
+                glUniform1i(shader.getUniformLocation("hasTexture"), textureID != -1 ? 1 : 0)
+
+                switch textureID {
+                case 0:
+                    glActiveTexture(GLenum(GL_TEXTURE0))
+                    glBindTexture(GLenum(GL_TEXTURE_2D), textures[0])
+                    glActiveTexture(GLenum(GL_TEXTURE1))
+                    glBindTexture(GLenum(GL_TEXTURE_2D), textures[1])
+                    glActiveTexture(GLenum(GL_TEXTURE3))
+                    glBindTexture(GLenum(GL_TEXTURE_2D), textures[2])
+                case 1:
+                    glActiveTexture(GLenum(GL_TEXTURE0))
+                    glBindTexture(GLenum(GL_TEXTURE_2D), textures[3])
+                    glActiveTexture(GLenum(GL_TEXTURE1))
+                    glBindTexture(GLenum(GL_TEXTURE_2D), textures[4])
+                    glActiveTexture(GLenum(GL_TEXTURE3))
+                    glBindTexture(GLenum(GL_TEXTURE_2D), textures[5])
+                default:
+                    break
+                }
 
                 glDrawElements(GLenum(GL_TRIANGLES), submesh.elementCount, GLenum(GL_UNSIGNED_INT), UnsafeRawPointer(bitPattern: submesh.elementBuffer.offset))
             }
@@ -754,8 +754,8 @@ extension Boxes {
         glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MIN_FILTER), GL_LINEAR_MIPMAP_LINEAR)
         glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MAG_FILTER), GL_LINEAR)
 
-        glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_S), GL_CLAMP_TO_EDGE)
-        glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_T), GL_CLAMP_TO_EDGE)
+        glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_S), GL_REPEAT)
+        glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_T), GL_REPEAT)
 
         imageData.withUnsafeBytes { (ptr: UnsafePointer<GLubyte>) in
             let rawPtr = UnsafeRawPointer(ptr)

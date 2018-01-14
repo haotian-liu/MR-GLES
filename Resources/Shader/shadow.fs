@@ -19,5 +19,5 @@ void main() {
     float depth = (shadowCoord.z / shadowCoord.w + 1.0) / 2.0;
     vec4 dist_pack = texture(depthTexture, shadowCoord.xy);
     bool isShadow = unpack(dist_pack) < depth;
-    color = isShadow ? vec4(0.3f) : vec4(timeVariant > 1.f ? 0.3f : timeVariant * 0.3f);
+    color = isShadow ? vec4(0.4f) : vec4(timeVariant > 1.f ? 0.4f : timeVariant * 0.4f);
 }
