@@ -28,8 +28,23 @@ class ModelObject {
     }
     var scaleBias: GLfloat = 1.0
     var rotate: GLfloat = 0.0
-    var selected: Bool = false
+    var selected: Bool = false {
+        didSet {
+            timeVariant = 0
+            animated = true
+            if selected {
+                lift = 0
+            } else {
+                oldLift = lift
+            }
+        }
+    }
     var index: Int = 0
+    var timeVariant: GLfloat = 0
+    var animated: Bool = false
+    var lift: GLfloat = 0
+    var oldLift: GLfloat = 0
+    let maxLift: GLfloat = 0.1
 }
 
 class Boxes {
@@ -561,7 +576,23 @@ class Boxes {
 //            let projectionMatrix = self.projectionMatrix
 
 //            var in_model = modelMatrix * GLKMatrix4MakeRotation(object.rotate, 0.0, 1.0, 0.0) * GLKMatrix4MakeScale(object.scaleBias, object.scaleBias, object.scaleBias)
-            var in_model = object.transform * GLKMatrix4MakeScale(scaleFactor, scaleFactor, scaleFactor)
+
+            if object.animated {
+                if object.timeVariant > Float.pi / 2.0 {
+                    object.animated = false
+                } else {
+                    if object.selected {
+                        object.lift = (1.0 - cos(object.timeVariant)) * object.maxLift
+                    } else {
+                        object.lift = cos(object.timeVariant) * object.oldLift
+                    }
+                }
+            }
+            object.timeVariant += Float.pi / 2.0 / 15.0
+
+            let lift = object.lift * object.scaleBias
+
+            var in_model = GLKMatrix4MakeTranslation(0, lift, 0) * object.transform * GLKMatrix4MakeScale(scaleFactor, scaleFactor, scaleFactor)
             var in_view = self.viewMatrix
             var in_proj = moveNearClipClose(projection: self.projectionMatrix)
             var in_modelview = GLKMatrix3(in_view * in_model)
@@ -618,7 +649,16 @@ class Boxes {
 //        glGenerateMipmap(GLenum(GL_TEXTURE_2D))
 
         for object in objects {
-            let scaleFactor: Float = 1.0
+            var scaleFactor: Float = 1.0
+            var timeVariant: Float
+            if object.selected {
+                scaleFactor *= 1 + sin(object.timeVariant) * 0.125
+                timeVariant = object.timeVariant
+            } else {
+                timeVariant = 1.0 - object.timeVariant
+                if timeVariant < 0 { timeVariant = 0 }
+            }
+            glUniform1f(shadowShader.getUniformLocation("timeVariant"), timeVariant)
             let in_model = object.transform * GLKMatrix4MakeScale(scaleFactor, scaleFactor, scaleFactor)
             var in_MVP = moveNearClipClose(projection: self.projectionMatrix) * self.viewMatrix * in_model
 
