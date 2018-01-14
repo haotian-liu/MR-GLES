@@ -158,8 +158,25 @@ extension ARViewController {
         //        os_log("tap point relative (%f, %f)\n", type: .debug, relativePoint.x, relativePoint.y)
         //        os_log("Tap gesture recognized", type: .debug)
 
-        if boxes.selectedObject != nil {
-            let color = boxes.getPixelMarker(adjustedPoint)
+        let tappedObject = getTappedObject(by: adjustedPoint)
+        if let selectedObject = boxes.selectedObject {
+            if let tappedObject = tappedObject {
+                selectedObject.selected = false
+                boxes.selectedObject = tappedObject
+                tappedObject.selected = true
+                trackingObject = tappedObject
+                trackingPoint = selectedObject.index == tappedObject.index ? trackingPoint : nil
+            } else {
+                selectedObject.selected = false
+                trackingObject = nil
+                trackingPoint = nil
+                boxes.selectedObject = nil
+            }
+            return
+        } else if let tappedObject = tappedObject {
+            tappedObject.selected = true
+            trackingObject = tappedObject
+            boxes.selectedObject = tappedObject
             return
         }
 
@@ -179,13 +196,35 @@ extension ARViewController {
         }
     }
 
+    private func getTappedObject(by point: CGPoint) -> ModelObject? {
+        let index = boxes.getPixelMarker(point)
+        guard index != 255 else { return nil }
+        return boxes.getObject(at: index)
+    }
+
     @objc func handlePan(_ gesture: ThresholdPanGestureRecognizer) {
         guard gesture.view != nil else { return }
 
+        let point = gesture.location(in: gesture.view)
+        let relativePoint = CGPoint(x: point.y / (gesture.view?.frame.size.height)!, y: point.x / (gesture.view?.frame.size.width)!)
+        let adjustedPoint = CGPoint(x: relativePoint.y * self.viewport.size.width, y: (1.0 - relativePoint.x) * self.viewport.size.height)
+
         switch gesture.state {
         case .began:
+            let tappedObject = getTappedObject(by: adjustedPoint)
+            if tappedObject == nil {
+                trackingPoint = nil
+                trackingObject?.selected = false
+                trackingObject = nil
+                boxes.selectedObject = nil
+                break
+            } else if let selectedObject = boxes.selectedObject, tappedObject!.index != selectedObject.index {
+                selectedObject.selected = false
+                trackingPoint = nil
+            }
+            tappedObject!.selected = true
+            boxes.selectedObject = tappedObject!
             trackingObject = boxes.selectedObject
-            break
         case .changed where gesture.isThresholdExceeded:
             guard let trackingObject = trackingObject else { return }
 

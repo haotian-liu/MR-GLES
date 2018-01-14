@@ -14,8 +14,9 @@ class ModelObject {
 //    init(_ transform: GLKMatrix4) {
 //        self.initialTransform = transform
 //    }
-    init(_ translate: float3) {
+    init(_ translate: float3, at index: Int) {
         self.translate = GLKVector3(translate)
+        self.index = index
     }
     var translate: GLKVector3
     var transform: GLKMatrix4 {
@@ -28,6 +29,7 @@ class ModelObject {
     var scaleBias: GLfloat = 1.0
     var rotate: GLfloat = 0.0
     var selected: Bool = false
+    var index: Int = 0
 }
 
 class Boxes {
@@ -100,6 +102,12 @@ class Boxes {
             let b = GLfloat(cos(Float(i) * (2 * Float.pi) / Float(count)))
             vertices.append(GLKVector3(a, 0.0, b))
         }
+    }
+
+    func getObject(at indexUInt8: UInt8) -> ModelObject? {
+        guard indexUInt8 < objects.count else { return nil }
+        let index = objects.index(Int(indexUInt8), offsetBy: 0)
+        return objects[index]
     }
 
     func loadModel() {
@@ -465,7 +473,7 @@ class Boxes {
         let mesh = meshes[0], submeshes = mesh.submeshes
 
         glBindVertexArray(VAO[0])
-        for object in objects {
+        for (index, object) in objects.enumerated() {
             let scaleFactor: Float = 0.001
             let model = object.transform * GLKMatrix4MakeScale(scaleFactor, scaleFactor, scaleFactor)
             let view = self.viewMatrix
@@ -478,7 +486,7 @@ class Boxes {
                 }
             }
 
-            for (index, submesh) in submeshes.enumerated() {
+            for submesh in submeshes {
                 glUniform1f(objectMarkShader.getUniformLocation("id"), GLfloat(index) / 255.0)
                 glDrawElements(GLenum(GL_TRIANGLES), submesh.elementCount, GLenum(GL_UNSIGNED_INT), UnsafeRawPointer(bitPattern: submesh.elementBuffer.offset))
             }
@@ -650,7 +658,7 @@ class Boxes {
 //    }
 
     func addBox(translate: float3) {
-        let object = ModelObject(translate)
+        let object = ModelObject(translate, at: objects.count)
 
         if let lastObject = objects.last {
             lastObject.selected = false
