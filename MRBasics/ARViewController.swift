@@ -16,6 +16,8 @@ class ARViewController: ViewController {
     var boxes = Boxes()
 
     private var lastDetected: float3?
+    private var trackingObject: ModelObject?
+    private var trackingPoint: (CGPoint, CGPoint)?
 
     @IBOutlet weak var messageLabel: UILabel!
     @IBOutlet weak var messagePanel: UIVisualEffectView!
@@ -83,18 +85,36 @@ class ARViewController: ViewController {
 //        }
 
         // crazy test after each frame refresh!
-        let screenCenter = CGPoint(x: 0.5, y: 0.5)
-        let relativePoint = screenCenter
-        let adjustedPoint = CGPoint(x: relativePoint.y * self.viewport.size.width, y: (1.0 - relativePoint.x) * self.viewport.size.height)
+        do {
+            let screenCenter = CGPoint(x: 0.5, y: 0.5)
+            let relativePoint = screenCenter
+            let adjustedPoint = CGPoint(x: relativePoint.y * self.viewport.size.width, y: (1.0 - relativePoint.x) * self.viewport.size.height)
 
-        let results = anchorHitTest(relativePoint, adjustedPoint, lastObjectPosition: lastDetected)
-        for (transform, translation) in results {
-            if let transform = transform {
-                lastDetected = transform.translation
-//                let anchor = ARAnchor(transform: transform)
-//                self.arSession.add(anchor: anchor)
-            } else if let translation = translation {
-                lastDetected = translation
+            let results = anchorHitTest(relativePoint, adjustedPoint, lastObjectPosition: lastDetected)
+            for (transform, translation) in results {
+                if let transform = transform {
+                    lastDetected = transform.translation
+                    //                let anchor = ARAnchor(transform: transform)
+                    //                self.arSession.add(anchor: anchor)
+                } else if let translation = translation {
+                    lastDetected = translation
+                }
+            }
+        }
+
+        do {
+            if let (relativePoint, adjustedPoint) = trackingPoint, let trackingObject = trackingObject {
+                let results = anchorHitTest(relativePoint, adjustedPoint, lastObjectPosition: float3(trackingObject.translate), infinitePlane: true)
+
+                for (transform, translation) in results {
+                    if let transform = transform {
+                        let anchor = ARAnchor(transform: transform)
+                        self.arSession.add(anchor: anchor)
+                        trackingObject.translate = GLKVector3(transform.translation)
+                    } else if let translation = translation {
+                        trackingObject.translate = GLKVector3(translation)
+                    }
+                }
             }
         }
 
@@ -159,22 +179,15 @@ extension ARViewController {
 
         switch gesture.state {
         case .began:
-            print("started")
-            guard boxes.selectedObject == nil else {
-                print("pan triggered when other is selected!")
-                let projected = boxes.projectedObject(test: boxes.selectedObject!)
-                os_log("selected on %f, %f", type: .debug, projected.x, projected.y)
-                return
-            }
-            print("pan started!")
+            trackingObject = boxes.selectedObject
             break
         case .changed where gesture.isThresholdExceeded:
-            guard let object = boxes.selectedObject else { return }
+            guard let trackingObject = trackingObject else { return }
 
             var translation = gesture.translation(in: gesture.view)
             translation.x = translation.x / (gesture.view?.frame.size.width)! * self.viewport.size.width
             translation.y = -translation.y / (gesture.view?.frame.size.height)! * self.viewport.size.height
-            let currentPosition = boxes.projectedObject(test: object)
+            let currentPosition = boxes.projectedObject(test: trackingObject)
             let point = CGPoint(x: CGFloat(currentPosition.x) + translation.x, y: CGFloat(currentPosition.y) + translation.y)
 //            let relativePoint = CGPoint(x: point.y / (gesture.view?.frame.size.height)!, y: point.x / (gesture.view?.frame.size.width)!)
             let relativePoint = CGPoint(x: point.y / self.viewport.size.height, y: 1.0 - point.x / self.viewport.size.width)
@@ -185,15 +198,17 @@ extension ARViewController {
 //            print("Adjusted point: \(adjustedPoint.x), \(adjustedPoint.y)")
 //            os_log("tap point relative (%f, %f)\n", type: .debug, relativePoint.x, relativePoint.y)
 
-            let results = anchorHitTest(relativePoint, adjustedPoint, lastObjectPosition: float3(object.translate), infinitePlane: true)
+            trackingPoint = (relativePoint, adjustedPoint)
+
+            let results = anchorHitTest(relativePoint, adjustedPoint, lastObjectPosition: float3(trackingObject.translate), infinitePlane: true)
 
             for (transform, translation) in results {
                 if let transform = transform {
                     let anchor = ARAnchor(transform: transform)
                     self.arSession.add(anchor: anchor)
-                    object.translate = GLKVector3(transform.translation)
+                    trackingObject.translate = GLKVector3(transform.translation)
                 } else if let translation = translation {
-                    object.translate = GLKVector3(translation)
+                    trackingObject.translate = GLKVector3(translation)
                 }
             }
 
@@ -202,8 +217,8 @@ extension ARViewController {
         case .changed:
             break
         default:
-            lastDetected = nil
-//            boxes.selectedObject = nil
+            trackingPoint = nil
+            trackingObject = nil
             break
         }
     }
