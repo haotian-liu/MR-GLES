@@ -27,26 +27,26 @@ extension ARCamera.TrackingState {
     var presentationString: String {
         switch self {
         case .notAvailable:
-            return "TRACKING UNAVAILABLE"
+            return "ARKit 异常，无法获取场景细节。"
         case .normal:
-            return "TRACKING NORMAL"
+            return "请缓慢移动相机扫描整个场景。"
         case .limited(let reason):
             switch reason {
             case .excessiveMotion:
-                return "TRACKING LIMITED\nToo much camera movement"
+                return "相机移得太快啦，请减慢移动速度。"
             case .insufficientFeatures:
-                return "TRACKING LIMITED\nNot enough surface detail"
+                return "场景细节不足，采用概率特征检测。"
             case .initializing:
-                return "Initializing AR Session"
+                return "AR 初始化中..."
             }
         }
     }
     var recommendation: String? {
         switch self {
         case .limited(.excessiveMotion):
-            return "Try slowing down your movement, or reset the session."
+            return ""
         case .limited(.insufficientFeatures):
-            return "Try pointing at a flat surface, or reset the session."
+            return ""
         default:
             return nil
         }
