@@ -99,8 +99,8 @@ class ARViewController: ViewController {
             for (transform, translation) in results {
                 if let transform = transform {
                     lastDetected = transform.translation
-                    //                let anchor = ARAnchor(transform: transform)
-                    //                self.arSession.add(anchor: anchor)
+//                    let anchor = ARAnchor(transform: transform)
+//                    self.arSession.add(anchor: anchor)
                 } else if let translation = translation {
                     lastDetected = translation
                 }
@@ -201,7 +201,7 @@ extension ARViewController {
             return
         }
 
-        let results = anchorHitTest(relativePoint, adjustedPoint)
+        let results = anchorHitTest(relativePoint, adjustedPoint, lastObjectPosition: lastDetected)
 
         for (index, (transform, translation)) in results.enumerated() {
             if let transform = transform {
