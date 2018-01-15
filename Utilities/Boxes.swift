@@ -120,13 +120,13 @@ class Boxes {
 
         attr = vertexDescriptor.attributes[2] as! MDLVertexAttribute
         attr.name = MDLVertexAttributeTextureCoordinate
-        attr.format = .float2
+        attr.format = .float3
         attr.offset = 0
         attr.bufferIndex = 2
 
         (vertexDescriptor.layouts[0] as! MDLVertexBufferLayout).stride = 12
         (vertexDescriptor.layouts[1] as! MDLVertexBufferLayout).stride = 12
-        (vertexDescriptor.layouts[2] as! MDLVertexBufferLayout).stride = 8
+        (vertexDescriptor.layouts[2] as! MDLVertexBufferLayout).stride = 12
 
         let asset = MDLAsset(url: url, vertexDescriptor: vertexDescriptor, bufferAllocator: GLKMeshBufferAllocator())
         for index in 0..<asset.count {
@@ -144,6 +144,7 @@ class Boxes {
                     textureIDs.append(-1)
                 }
             }
+            object.addNormals(withAttributeNamed: MDLVertexAttributeNormal, creaseThreshold: 0.0)
             object.addTangentBasis(forTextureCoordinateAttributeNamed: MDLVertexAttributeTextureCoordinate, tangentAttributeNamed: MDLVertexAttributeTangent, bitangentAttributeNamed: MDLVertexAttributeBitangent)
             os_log("Loaded MDLMesh with %d submeshes, %d vertex buffers, %d vertices", type: .debug, object.submeshes!.count, object.vertexBuffers.count, object.vertexCount)
 //            os_log("Loaded MDLMesh vertex descriptor attributes debug: %s %d %d", type: .debug, (object.vertexDescriptor.attributes[0] as! MDLVertexAttribute).name, (object.vertexDescriptor.attributes[0] as! MDLVertexAttribute).offset, (object.vertexDescriptor.attributes[0] as! MDLVertexAttribute).bufferIndex)
@@ -270,7 +271,7 @@ class Boxes {
         glBindBuffer(GLenum(GL_ARRAY_BUFFER), mesh.vertexBuffers[2].glBufferName)
         let locVertTexture = GLuint(glGetAttribLocation(shader.programId, "vertUV"))
         glEnableVertexAttribArray(locVertTexture)
-        glVertexAttribPointer(locVertTexture, 2, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<GLKVector2>.size), nil)
+        glVertexAttribPointer(locVertTexture, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), GLsizei(MemoryLayout<GLKVector3>.size), nil)
 
         // vertex tangent
         glBindBuffer(GLenum(GL_ARRAY_BUFFER), mesh.vertexBuffers[3].glBufferName)

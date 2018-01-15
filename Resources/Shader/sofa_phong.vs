@@ -7,7 +7,7 @@ uniform mat3 modelViewMatrix;
 
 layout(location=0) in vec3 vertPos;
 in vec3 vertNormal;
-in vec2 vertUV;
+in vec3 vertUV;
 in vec3 vertTangent;
 in vec3 vertBitangent;
 
@@ -27,7 +27,7 @@ void main() {
 
     worldCoord = worldPos.xyz;
     eyeCoord = eyePos.xyz;
-    texCoord = vertUV.xy;
+    texCoord = vertUV.xy * 2.0;
 //    texCoord = abs(normalize(vertUV));
 //    texCoord = vec2(vertUV.x, 1.0 - vertUV.y);
 //    normal = normalize(modelViewMatrix * vertNormal);

@@ -82,5 +82,6 @@ void main() {
     vec3 combined = vec3(KaColor + KdColor * diffuse + KsColor * specular);
 
 //    FragColor = vec4(selected ? vec3(combined.x, combined.yz + vec2(0.3f)) : combined, 1.f);
+//    FragColor = vec4(normalMap(normal), 1.f);
     FragColor = vec4(combined, 1.f);
 }
