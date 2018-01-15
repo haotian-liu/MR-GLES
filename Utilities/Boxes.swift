@@ -98,6 +98,15 @@ class Boxes {
         return objects[index]
     }
 
+    func remove(_ object: ModelObject) {
+        let index = object.index
+        for i in index..<objects.count {
+            let indexMark = objects.index(i, offsetBy: 0)
+            objects[indexMark].index -= 1
+        }
+        objects.remove(at: index)
+    }
+
     func loadModel() {
         guard let url = Bundle.main.url(forResource: "Model/sofa/sofa", withExtension: "obj") else {
             os_log("error loading model", type: .error)

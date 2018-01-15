@@ -44,6 +44,11 @@ class ARViewController: ViewController {
         panGesture.delegate = self
         self.view.addGestureRecognizer(panGesture)
 
+        let pressGesture = UILongPressGestureRecognizer.init(target: self, action: #selector(self.handlePress(_:)))
+        pressGesture.minimumPressDuration = 1.0
+        pressGesture.delegate = self
+        self.view.addGestureRecognizer(pressGesture)
+
         self.view.isUserInteractionEnabled = true
 
         setupUIControls()
@@ -148,6 +153,22 @@ extension ARViewController {
         messagePanel.clipsToBounds = true
         messagePanel.isHidden = true
         messageLabel.text = ""
+    }
+
+    @objc func handlePress(_ gesture: UILongPressGestureRecognizer) {
+        let point = gesture.location(in: gesture.view)
+        let relativePoint = CGPoint(x: point.y / (gesture.view?.frame.size.height)!, y: point.x / (gesture.view?.frame.size.width)!)
+        let adjustedPoint = CGPoint(x: relativePoint.y * self.viewport.size.width, y: (1.0 - relativePoint.x) * self.viewport.size.height)
+
+        let tappedObject = getTappedObject(by: adjustedPoint)
+
+        if let tappedObject = tappedObject {
+            trackingObject?.selected = false
+            trackingObject = nil
+            trackingPoint = nil
+            boxes.selectedObject = nil
+            boxes.remove(tappedObject)
+        }
     }
 
     @objc func handleTap(_ gesture: UITapGestureRecognizer) {

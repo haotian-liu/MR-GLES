@@ -217,6 +217,9 @@ extension ViewController: UIGestureRecognizerDelegate {
     }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        if (otherGestureRecognizer is UILongPressGestureRecognizer) {
+            return true
+        }
         // Rotation and pinch gesture have top priority
         if (otherGestureRecognizer is ThresholdPanGestureRecognizer) && (gestureRecognizer is UIRotationGestureRecognizer || gestureRecognizer is UIPinchGestureRecognizer) {
             return true
