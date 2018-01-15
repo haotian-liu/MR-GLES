@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:MRBasics.xcodeproj">
+      location = "self:/Users/haotian/Code/MRBasics/iDecorator.xcodeproj">
    </FileRef>
 </Workspace>

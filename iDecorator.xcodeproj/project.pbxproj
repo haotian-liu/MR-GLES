@@ -54,17 +54,17 @@
 		754970CA200083C300F4F7C8 /* Model */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Model; path = Resources/Model; sourceTree = "<group>"; };
 		754970CC2000A20600F4F7C8 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
 		754970CE2000A20D00F4F7C8 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
-		754E1DEB1F7DEA7200265633 /* MRBasics.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MRBasics.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		754E1DEB1F7DEA7200265633 /* iDecorator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iDecorator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		754E1DEE1F7DEA7200265633 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		754E1DF01F7DEA7200265633 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		754E1DF31F7DEA7200265633 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		754E1DF51F7DEA7200265633 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		754E1DF81F7DEA7200265633 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		754E1DFA1F7DEA7200265633 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		754E1DFF1F7DEA7200265633 /* MRBasicsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MRBasicsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		754E1DFF1F7DEA7200265633 /* iDecoratorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iDecoratorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		754E1E031F7DEA7200265633 /* MRBasicsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MRBasicsTests.swift; sourceTree = "<group>"; };
 		754E1E051F7DEA7200265633 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		754E1E0A1F7DEA7200265633 /* MRBasicsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MRBasicsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		754E1E0A1F7DEA7200265633 /* iDecoratorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iDecoratorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		754E1E0E1F7DEA7300265633 /* MRBasicsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MRBasicsUITests.swift; sourceTree = "<group>"; };
 		754E1E101F7DEA7300265633 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		754E1E1D1F7DEB2A00265633 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -120,9 +120,9 @@
 		754E1DEC1F7DEA7200265633 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				754E1DEB1F7DEA7200265633 /* MRBasics.app */,
-				754E1DFF1F7DEA7200265633 /* MRBasicsTests.xctest */,
-				754E1E0A1F7DEA7200265633 /* MRBasicsUITests.xctest */,
+				754E1DEB1F7DEA7200265633 /* iDecorator.app */,
+				754E1DFF1F7DEA7200265633 /* iDecoratorTests.xctest */,
+				754E1E0A1F7DEA7200265633 /* iDecoratorUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -187,9 +187,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		754E1DEA1F7DEA7200265633 /* MRBasics */ = {
+		754E1DEA1F7DEA7200265633 /* iDecorator */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 754E1E131F7DEA7300265633 /* Build configuration list for PBXNativeTarget "MRBasics" */;
+			buildConfigurationList = 754E1E131F7DEA7300265633 /* Build configuration list for PBXNativeTarget "iDecorator" */;
 			buildPhases = (
 				754E1DE71F7DEA7200265633 /* Sources */,
 				754E1DE81F7DEA7200265633 /* Frameworks */,
@@ -199,14 +199,14 @@
 			);
 			dependencies = (
 			);
-			name = MRBasics;
+			name = iDecorator;
 			productName = MRBasics;
-			productReference = 754E1DEB1F7DEA7200265633 /* MRBasics.app */;
+			productReference = 754E1DEB1F7DEA7200265633 /* iDecorator.app */;
 			productType = "com.apple.product-type.application";
 		};
-		754E1DFE1F7DEA7200265633 /* MRBasicsTests */ = {
+		754E1DFE1F7DEA7200265633 /* iDecoratorTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 754E1E161F7DEA7300265633 /* Build configuration list for PBXNativeTarget "MRBasicsTests" */;
+			buildConfigurationList = 754E1E161F7DEA7300265633 /* Build configuration list for PBXNativeTarget "iDecoratorTests" */;
 			buildPhases = (
 				754E1DFB1F7DEA7200265633 /* Sources */,
 				754E1DFC1F7DEA7200265633 /* Frameworks */,
@@ -217,14 +217,14 @@
 			dependencies = (
 				754E1E011F7DEA7200265633 /* PBXTargetDependency */,
 			);
-			name = MRBasicsTests;
+			name = iDecoratorTests;
 			productName = MRBasicsTests;
-			productReference = 754E1DFF1F7DEA7200265633 /* MRBasicsTests.xctest */;
+			productReference = 754E1DFF1F7DEA7200265633 /* iDecoratorTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		754E1E091F7DEA7200265633 /* MRBasicsUITests */ = {
+		754E1E091F7DEA7200265633 /* iDecoratorUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 754E1E191F7DEA7300265633 /* Build configuration list for PBXNativeTarget "MRBasicsUITests" */;
+			buildConfigurationList = 754E1E191F7DEA7300265633 /* Build configuration list for PBXNativeTarget "iDecoratorUITests" */;
 			buildPhases = (
 				754E1E061F7DEA7200265633 /* Sources */,
 				754E1E071F7DEA7200265633 /* Frameworks */,
@@ -235,9 +235,9 @@
 			dependencies = (
 				754E1E0C1F7DEA7200265633 /* PBXTargetDependency */,
 			);
-			name = MRBasicsUITests;
+			name = iDecoratorUITests;
 			productName = MRBasicsUITests;
-			productReference = 754E1E0A1F7DEA7200265633 /* MRBasicsUITests.xctest */;
+			productReference = 754E1E0A1F7DEA7200265633 /* iDecoratorUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -266,7 +266,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 754E1DE61F7DEA7200265633 /* Build configuration list for PBXProject "MRBasics" */;
+			buildConfigurationList = 754E1DE61F7DEA7200265633 /* Build configuration list for PBXProject "iDecorator" */;
 			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -279,9 +279,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				754E1DEA1F7DEA7200265633 /* MRBasics */,
-				754E1DFE1F7DEA7200265633 /* MRBasicsTests */,
-				754E1E091F7DEA7200265633 /* MRBasicsUITests */,
+				754E1DEA1F7DEA7200265633 /* iDecorator */,
+				754E1DFE1F7DEA7200265633 /* iDecoratorTests */,
+				754E1E091F7DEA7200265633 /* iDecoratorUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -353,12 +353,12 @@
 /* Begin PBXTargetDependency section */
 		754E1E011F7DEA7200265633 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 754E1DEA1F7DEA7200265633 /* MRBasics */;
+			target = 754E1DEA1F7DEA7200265633 /* iDecorator */;
 			targetProxy = 754E1E001F7DEA7200265633 /* PBXContainerItemProxy */;
 		};
 		754E1E0C1F7DEA7200265633 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 754E1DEA1F7DEA7200265633 /* MRBasics */;
+			target = 754E1DEA1F7DEA7200265633 /* iDecorator */;
 			targetProxy = 754E1E0B1F7DEA7200265633 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -499,7 +499,7 @@
 				INFOPLIST_FILE = MRBasics/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.haotian.MRBasics;
+				PRODUCT_BUNDLE_IDENTIFIER = com.haotian.iDecorator;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -515,7 +515,7 @@
 				INFOPLIST_FILE = MRBasics/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.haotian.MRBasics;
+				PRODUCT_BUNDLE_IDENTIFIER = com.haotian.iDecorator;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -534,7 +534,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MRBasics.app/MRBasics";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/iDecorator.app/iDecorator";
 			};
 			name = Debug;
 		};
@@ -550,7 +550,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MRBasics.app/MRBasics";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/iDecorator.app/iDecorator";
 			};
 			name = Release;
 		};
@@ -587,7 +587,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		754E1DE61F7DEA7200265633 /* Build configuration list for PBXProject "MRBasics" */ = {
+		754E1DE61F7DEA7200265633 /* Build configuration list for PBXProject "iDecorator" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				754E1E111F7DEA7300265633 /* Debug */,
@@ -596,7 +596,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		754E1E131F7DEA7300265633 /* Build configuration list for PBXNativeTarget "MRBasics" */ = {
+		754E1E131F7DEA7300265633 /* Build configuration list for PBXNativeTarget "iDecorator" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				754E1E141F7DEA7300265633 /* Debug */,
@@ -605,7 +605,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		754E1E161F7DEA7300265633 /* Build configuration list for PBXNativeTarget "MRBasicsTests" */ = {
+		754E1E161F7DEA7300265633 /* Build configuration list for PBXNativeTarget "iDecoratorTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				754E1E171F7DEA7300265633 /* Debug */,
@@ -614,7 +614,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		754E1E191F7DEA7300265633 /* Build configuration list for PBXNativeTarget "MRBasicsUITests" */ = {
+		754E1E191F7DEA7300265633 /* Build configuration list for PBXNativeTarget "iDecoratorUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				754E1E1A1F7DEA7300265633 /* Debug */,
