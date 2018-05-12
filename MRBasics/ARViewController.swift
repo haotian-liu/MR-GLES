@@ -15,6 +15,9 @@ class ARViewController: ViewController {
     var textManager: TextManager!
     var boxes = Boxes()
 
+    private var guideMark: Int = 0
+    // 0=nothing 1=tap 2=scale 3=move 4=release 5=delete
+
     private var lastDetected: float3?
     private var trackingObject: ModelObject?
     private var trackingPoint: (CGPoint, CGPoint)?
@@ -105,6 +108,7 @@ class ARViewController: ViewController {
                     lastDetected = translation
                 }
             }
+//            print("\(String(describing: lastDetected?.x)) \(String(describing: lastDetected?.y)) \(String(describing: lastDetected?.z))")
         }
 
         do {
@@ -141,6 +145,10 @@ class ARViewController: ViewController {
             textManager.escalateFeedback(for: camera.trackingState, inSeconds: 3.0)
         case .normal:
             textManager.cancelScheduledMessage(forType: .trackingStateEscalation)
+            if guideMark == 0 {
+                guideMark = 1
+                textManager.scheduleMessage("请在屏幕上点击以放置沙发", inSeconds: 5.0, messageType: .focusSquare)
+            }
         }
     }
 }
@@ -179,6 +187,17 @@ extension ARViewController {
         //        os_log("tap point relative (%f, %f)\n", type: .debug, relativePoint.x, relativePoint.y)
         //        os_log("Tap gesture recognized", type: .debug)
 
+        if guideMark < 2 {
+            guideMark = 2
+            textManager.cancelScheduledMessage(forType: .focusSquare)
+            textManager.scheduleMessage("用两只手指伸拉、旋转控制物体大小与方向", inSeconds: 1.0, messageType: .focusSquare)
+        }
+        if guideMark == 4 && boxes.count > 1 {
+            guideMark = 5
+            textManager.cancelScheduledMessage(forType: .focusSquare)
+            textManager.scheduleMessage("如果场景里物体太多，可以长按删除。", inSeconds: 5.0, messageType: .focusSquare)
+        }
+
         let tappedObject = getTappedObject(by: adjustedPoint)
         if let selectedObject = boxes.selectedObject {
             if let tappedObject = tappedObject {
@@ -201,7 +220,7 @@ extension ARViewController {
             return
         }
 
-        let results = anchorHitTest(relativePoint, adjustedPoint, lastObjectPosition: lastDetected)
+        let results = anchorHitTest(relativePoint, adjustedPoint, lastObjectPosition: lastDetected, showMessage: true)
 
         for (index, (transform, translation)) in results.enumerated() {
             if let transform = transform {
@@ -213,6 +232,8 @@ extension ARViewController {
                 }
             } else if let translation = translation {
                 boxes.addBox(translate: translation)
+            } else {
+                print("failed to add object")
             }
         }
     }
@@ -229,6 +250,12 @@ extension ARViewController {
         let point = gesture.location(in: gesture.view)
         let relativePoint = CGPoint(x: point.y / (gesture.view?.frame.size.height)!, y: point.x / (gesture.view?.frame.size.width)!)
         let adjustedPoint = CGPoint(x: relativePoint.y * self.viewport.size.width, y: (1.0 - relativePoint.x) * self.viewport.size.height)
+
+        if guideMark == 3 {
+            guideMark = 4
+            textManager.cancelScheduledMessage(forType: .focusSquare)
+            textManager.scheduleMessage("调整满意的话，在空白处点击，物体就会被放下", inSeconds: 3.0, messageType: .focusSquare)
+        }
 
         switch gesture.state {
         case .began:
@@ -291,6 +318,12 @@ extension ARViewController {
     @objc func handleRotate(_ gesture: UIRotationGestureRecognizer) {
         guard gesture.view != nil else { return }
 
+        if guideMark < 3 {
+            guideMark = 3
+            textManager.cancelScheduledMessage(forType: .focusSquare)
+            textManager.scheduleMessage("尝试拖动物体来改变物体的位置", inSeconds: 1.0, messageType: .focusSquare)
+        }
+
         if gesture.state == .began || gesture.state == .changed {
             boxes.rotate(by: gesture.rotation)
             gesture.rotation = 0
@@ -300,13 +333,19 @@ extension ARViewController {
     @objc func handlePinch(_ gesture: UIPinchGestureRecognizer) {
         guard gesture.view != nil else { return }
 
+        if guideMark < 3 {
+            guideMark = 3
+            textManager.cancelScheduledMessage(forType: .focusSquare)
+            textManager.scheduleMessage("尝试拖动物体来改变物体的位置", inSeconds: 1.0, messageType: .focusSquare)
+        }
+
         if gesture.state == .began || gesture.state == .changed {
             boxes.scale(by: gesture.scale)
             gesture.scale = 1.0
         }
     }
 
-    func anchorHitTest(_ relativePoint: CGPoint, _ adjustedPoint: CGPoint, lastObjectPosition: float3? = nil, infinitePlane: Bool = false) -> [(float4x4?, float3?)] {
+    func anchorHitTest(_ relativePoint: CGPoint, _ adjustedPoint: CGPoint, lastObjectPosition: float3? = nil, infinitePlane: Bool = false, showMessage: Bool = false) -> [(float4x4?, float3?)] {
         let currentFrame = self.arSession.currentFrame
         let results = currentFrame?.hitTest(relativePoint, types: ARHitTestResult.ResultType.existingPlaneUsingExtent)
         if let count = results?.count, count != 0 {
@@ -334,6 +373,9 @@ extension ARViewController {
 //                os_log("Feature point unfiltered success!", type: .debug)
                 return [(nil, result)]
             } else {
+                if showMessage {
+                    textManager.showMessage("试试别的地方！", autoHide: true)
+                }
 //                os_log("Feature point detection failed!", type: .debug)
                 return [(nil, nil)]
             }

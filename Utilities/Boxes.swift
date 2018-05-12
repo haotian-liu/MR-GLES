@@ -56,6 +56,12 @@ class Boxes {
     private var objects: [ModelObject] = []
     public var selectedObject: ModelObject? = nil
 
+    var count: Int {
+        get {
+            return objects.count
+        }
+    }
+
     // shadow FBO
     private var FBO = GLuint()
     private var RBO = Array<GLuint>(repeating: GLuint(), count: 2)

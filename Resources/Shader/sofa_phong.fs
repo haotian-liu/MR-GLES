@@ -58,9 +58,9 @@ void main() {
 //    float height = texture(mapBumpSampler, texCoord).x;
     vec3 KdColor = hasTexture ? texture(mapKaSampler, texCoord).xyz : vec3(0.5f);
     vec3 KaColor = vec3(.1f) * KdColor;
-    vec3 KsColor = hasTexture ? texture(mapReflSampler, texCoord).xyz : vec3(0.5f);
+    vec3 KsColor = hasTexture ? length(texture(mapReflSampler, texCoord).xyz) * vec3(0.5f) : vec3(0.5f);
     vec3 lightDirection = vec3(1.f);
-    float lightDistance = 1.2;
+    float lightDistance = 1.25f;
     float Shininess = 10.f;
 
     //    vec3 N = normal + bump;
@@ -78,6 +78,7 @@ void main() {
 
     float diffuse = max(NdotL, 0.f) / lightDistance;
     float specular = hasTexture ? max(pow(EdotR, Shininess), 0.f) / lightDistance : 0.f;
+    specular = clamp(specular, 0.f, 1.f);
 
     vec3 combined = vec3(KaColor + KdColor * diffuse + KsColor * specular);
 

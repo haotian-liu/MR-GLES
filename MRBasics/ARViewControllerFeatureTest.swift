@@ -6,6 +6,8 @@
 //  Copyright © 2018年 Haotian. All rights reserved.
 //
 
+// Motivated by https://developer.apple.com/documentation/arkit/handling_3d_interaction_and_ui_controls_in_augmented_reality
+
 import GLKit
 import ARKit
 
